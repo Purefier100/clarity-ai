@@ -8,28 +8,43 @@
 </head>
 
 <body>
-    <div class="container">
-        <h2>AI Chat</h2>
+
+    <body>
+
+        <!-- LANDING -->
+        <div id="landing" class="container">
+            <h1 class="brand">Clarity AI</h1>
+            <p class="tagline">Think clearly. Ask better. Get answers.</p>
+
+            <button onclick="showAuth()">Get Started</button>
+        </div>
 
         <!-- AUTH -->
-        <div id="auth">
-            <input id="email" type="email" placeholder="Email" />
+        <div id="auth" class="container hidden">
+            <h2>Welcome Back</h2>
+
+            <input id="email" placeholder="Email" />
             <input id="password" type="password" placeholder="Password" />
 
-            <button id="registerBtn">Register</button>
+            <button id="registerBtn">Create Account</button>
             <button id="loginBtn">Login</button>
         </div>
 
         <!-- CHAT -->
-        <div id="chat" class="hidden">
+        <div id="chat" class="container hidden">
+            <h2>Clarity AI</h2>
+
             <div id="messages"></div>
 
             <div class="input-area">
-                <input id="messageInput" placeholder="Type a message..." />
-                <button id="sendBtn">Send</button>
+                <input id="messageInput" placeholder="Ask Clarity…" />
+                <button onclick="sendMessage()">Send</button>
             </div>
         </div>
-    </div>
+
+        <script src="app.js"></script>
+    </body>
+
 
     <!-- IMPORTANT: JS must load AFTER HTML -->
     <script src="app.js"></script>

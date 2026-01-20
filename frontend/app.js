@@ -1,66 +1,103 @@
-const API_BASE = "https://ai-chat-api-a3wn.onrender.com";
+const API = "https://ai-chat-api-a3wn.onrender.com";
 
-const authDiv = document.getElementById("auth");
-const chatDiv = document.getElementById("chat");
-const messagesDiv = document.getElementById("messages");
+let token = "";
 
-const emailInput = document.getElementById("email");
-const passwordInput = document.getElementById("password");
-const messageInput = document.getElementById("messageInput");
+/* ---------- PAGE SWITCHING ---------- */
+function showAuth() {
+    document.getElementById("landing").classList.add("hidden");
+    document.getElementById("auth").classList.remove("hidden");
+}
 
+/* ---------- AUTH ---------- */
 document.getElementById("registerBtn").onclick = async () => {
-    const email = emailInput.value;
-    const password = passwordInput.value;
+    const email = email.value;
+    const password = password.value;
 
-    const res = await fetch(`${API_BASE}/api/auth/register`, {
+    await fetch(`${API}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
     });
 
-    const data = await res.json();
-    alert(data.message || "Registered");
+    alert("Account created. Please login.");
 };
 
 document.getElementById("loginBtn").onclick = async () => {
-    const email = emailInput.value;
-    const password = passwordInput.value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-    const res = await fetch(`${API_BASE}/api/auth/login`, {
+    const res = await fetch(`${API}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
     });
 
     const data = await res.json();
+    token = data.token;
 
-    if (data.token) {
-        localStorage.setItem("token", data.token);
-        authDiv.classList.add("hidden");
-        chatDiv.classList.remove("hidden");
-    } else {
-        alert("Login failed");
-    }
+    document.getElementById("auth").classList.add("hidden");
+    document.getElementById("chat").classList.remove("hidden");
 };
 
-document.getElementById("sendBtn").onclick = async () => {
-    const token = localStorage.getItem("token");
-    const message = messageInput.value;
+/* ---------- CHAT ---------- */
+async function sendMessage() {
+    const input = document.getElementById("messageInput");
+    const text = input.value.trim();
+    if (!text) return;
 
-    const res = await fetch(`${API_BASE}/api/ai/chat`, {
+    input.value = "";
+
+    addMessage("user", text);
+
+    const loading = addMessage("ai", "Thinking…", true);
+
+    const res = await fetch(`${API}/api/ai/chat`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
+            Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({
-            sessionId: "frontend-user",
-            message
+            sessionId: "prod-user",
+            message: text
         })
     });
 
     const data = await res.json();
-    messagesDiv.innerHTML += `<p><b>You:</b> ${message}</p>`;
-    messagesDiv.innerHTML += `<p><b>AI:</b> ${data.reply}</p>`;
-    messageInput.value = "";
-};
+
+    loading.remove();
+    typeMessage("ai", data.reply);
+}
+
+/* ---------- UI HELPERS ---------- */
+function addMessage(role, text, loading = false) {
+    const messages = document.getElementById("messages");
+
+    const msg = document.createElement("div");
+    msg.className = `message ${role}`;
+
+    msg.innerHTML = `
+    <div class="avatar">${role === "ai" ? "🤖" : "🧑"}</div>
+    <div class="bubble">${text}</div>
+  `;
+
+    if (loading) msg.classList.add("loading");
+
+    messages.appendChild(msg);
+    messages.scrollTop = messages.scrollHeight;
+
+    return msg;
+}
+
+function typeMessage(role, text) {
+    const msg = addMessage(role, "");
+    const bubble = msg.querySelector(".bubble");
+
+    let i = 0;
+    const interval = setInterval(() => {
+        bubble.textContent += text[i];
+        i++;
+        if (i >= text.length) clearInterval(interval);
+    }, 20);
+}
+

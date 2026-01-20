@@ -1,59 +1,203 @@
+/* ---------- RESET ---------- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ---------- PAGE ---------- */
 body {
-    font-family: Arial, sans-serif;
-    background: #0f172a;
-    color: white;
+    min-height: 100vh;
+    background: radial-gradient(circle at top,
+            #0f172a,
+            #020617 70%);
     display: flex;
+    align-items: center;
     justify-content: center;
-    margin-top: 50px;
+    color: #e5e7eb;
 }
 
+/* ---------- CARD ---------- */
 .container {
-    width: 400px;
-    background: #020617;
-    padding: 20px;
-    border-radius: 10px;
+    width: 420px;
+    background: rgba(15, 23, 42, 0.9);
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow:
+        0 30px 60px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(12px);
 }
 
+/* ---------- HEADER ---------- */
+.container h2 {
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 24px;
+    letter-spacing: 0.3px;
+}
+
+/* ---------- INPUTS ---------- */
 input {
     width: 100%;
-    padding: 10px;
-    margin: 5px 0;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    border-radius: 10px;
+    border: 1px solid #1e293b;
+    background: #020617;
+    color: #e5e7eb;
+    font-size: 0.95rem;
 }
 
+input::placeholder {
+    color: #64748b;
+}
+
+input:focus {
+    outline: none;
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.15);
+}
+
+/* ---------- BUTTONS ---------- */
 button {
     width: 100%;
-    padding: 10px;
-    margin-top: 5px;
+    padding: 14px;
+    border-radius: 10px;
+    border: none;
     cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+/* Primary */
+#registerBtn {
+    background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+    color: #020617;
+    margin-bottom: 10px;
+}
+
+#registerBtn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+/* Secondary */
+#loginBtn {
+    background: transparent;
+    border: 1px solid #334155;
+    color: #e5e7eb;
+}
+
+#loginBtn:hover {
+    background: #020617;
+}
+
+/* ---------- CHAT ---------- */
+#chat {
+    display: flex;
+    flex-direction: column;
 }
 
 #messages {
-    height: 300px;
-    overflow-y: auto;
+    flex: 1;
+    margin-bottom: 16px;
+    padding: 16px;
     background: #020617;
-    padding: 10px;
-    margin-bottom: 10px;
+    border-radius: 12px;
+    overflow-y: auto;
+    font-size: 0.9rem;
+    line-height: 1.6;
 }
 
-.message {
-    margin-bottom: 10px;
+/* Messages */
+#messages p {
+    margin-bottom: 12px;
 }
 
-.user {
-    text-align: right;
+#messages strong {
     color: #38bdf8;
 }
 
-.bot {
-    text-align: left;
-    color: #a5b4fc;
+/* ---------- INPUT AREA ---------- */
+.input-area {
+    display: flex;
+    gap: 10px;
 }
 
+.input-area input {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.input-area button {
+    width: 90px;
+    background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+    color: #020617;
+}
+
+/* ---------- UTIL ---------- */
 .hidden {
     display: none;
 }
 
-.input-area {
+/* ---------- BRAND ---------- */
+.brand {
+    font-size: 2.2rem;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.tagline {
+    text-align: center;
+    color: #94a3b8;
+    margin-bottom: 24px;
+}
+
+/* ---------- CHAT MESSAGES ---------- */
+.message {
     display: flex;
-    gap: 5px;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.message.user {
+    flex-direction: row-reverse;
+}
+
+.avatar {
+    width: 36px;
+    height: 36px;
+    background: #020617;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.bubble {
+    max-width: 75%;
+    padding: 12px 14px;
+    border-radius: 14px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.message.user .bubble {
+    background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+    color: #020617;
+}
+
+.message.ai .bubble {
+    background: #020617;
+    border: 1px solid #1e293b;
+}
+
+.loading .bubble {
+    opacity: 0.6;
+    font-style: italic;
 }
