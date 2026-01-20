@@ -1,5 +1,3 @@
-alert("app.js loaded");
-
 const API_BASE = "https://ai-chat-api-a3wn.onrender.com";
 
 const authDiv = document.getElementById("auth");
