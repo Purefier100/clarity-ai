@@ -18,17 +18,17 @@ dotenv.config({ path: path.join(__dirname, "../.env") });
 // Init app
 const app = express();
 
-// ✅ CORS MUST COME BEFORE ROUTES
+// ✅ CORRECT CORS (NO CRASH, NO BLOCK)
 app.use(cors({
-    origin: "*",
+    origin: true,
+    credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
-app.options("*", cors());
 
 app.use(express.json());
 
-// Connect DB
+// DB
 connectDB();
 
 // Rate limiting
@@ -45,8 +45,8 @@ app.get("/", (req, res) => {
     res.json({ status: "AI API running 🚀" });
 });
 
-// Start server
+// Start
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () =>
-    console.log(`Server running on port ${PORT}`)
-);
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
