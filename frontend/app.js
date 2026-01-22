@@ -56,6 +56,13 @@ document.getElementById("loginBtn").onclick = async () => {
     document.getElementById("chat").classList.remove("hidden");
 };
 
+function showAuth() {
+    document.getElementById("landing").classList.add("hidden");
+    document.getElementById("auth").classList.remove("hidden");
+}
+document.getElementById("getStartedBtn")?.addEventListener("click", showAuth);
+
+
 /* ---------- CHAT ---------- */
 async function sendMessage() {
     const input = document.getElementById("messageInput");
