@@ -32,21 +32,28 @@ body {
 
 .container {
     width: 100%;
-    max-width: 520px;
-    min-height: 80vh;
+    max-width: 420px;
+    height: 90vh;
     display: flex;
     flex-direction: column;
+    padding: 12px;
 }
+
 
 #messages {
     flex: 1;
     overflow-y: auto;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    padding: 12px;
+    gap: 10px;
 }
 
+.message .bubble {
+    max-width: 85%;
+    padding: 12px 14px;
+    font-size: 14px;
+    line-height: 1.5;
+    word-wrap: break-word;
+}
 
 /* ---------- HEADER ---------- */
 .container h2 {
@@ -229,4 +236,28 @@ button {
 .loading .bubble {
     opacity: 0.6;
     font-style: italic;
+}
+
+@media (max-width: 480px) {
+    .container {
+        height: 100vh;
+        border-radius: 0;
+    }
+
+    .message .bubble {
+        max-width: 95%;
+        font-size: 13px;
+    }
+
+    .input-area {
+        padding: 8px;
+    }
+}
+
+.input-area {
+    display: flex;
+    gap: 8px;
+    position: sticky;
+    bottom: 0;
+    background: #0b1220;
 }
