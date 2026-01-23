@@ -84,32 +84,40 @@ async function sendMessage() {
     let text = messageInput.value;
     if (!text || !text.trim()) return;
 
-    text = text.trim(); // GUARANTEED NON-EMPTY
+    text = text.trim(); // hard guarantee
 
     messageInput.value = "";
     addMessage(text, "user");
     const loading = addMessage("Thinking…", "ai", true);
 
     try {
+        const payload = {
+            sessionId: "clarity",
+            message: text,   // ✅ backend expects this
+            content: text    // ✅ mongoose validation expects this
+        };
+
         const res = await fetch(`${API}/api/ai/chat`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`
             },
-            body: JSON.stringify({
-                sessionId: "clarity",
-                content: text,      // ✅ REQUIRED
-                message: text       // ✅ BACKWARD COMPATIBILITY
-            })
+            body: JSON.stringify(payload)
         });
 
         const data = await res.json();
         loading.remove();
 
-        if (!res.ok || !data.reply) {
-            console.error("AI backend error:", data);
+        if (!res.ok) {
+            console.error("Backend error:", data);
             addMessage("⚠️ AI temporarily unavailable.", "ai");
+            return;
+        }
+
+        if (!data.reply) {
+            console.error("No reply field:", data);
+            addMessage("⚠️ AI response malformed.", "ai");
             return;
         }
 
@@ -121,6 +129,7 @@ async function sendMessage() {
         addMessage("⚠️ Network error. Try again.", "ai");
     }
 }
+
 
 /* ---------- UI HELPERS ---------- */
 function addMessage(text, role, loading = false) {
