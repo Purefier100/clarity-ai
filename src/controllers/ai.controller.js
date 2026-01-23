@@ -1,33 +1,42 @@
-import Groq from "groq-sdk";
+import Memory from "../models/Memory.js";
 
-export const generateText = async (req, res) => {
+export const chat = async (req, res) => {
     try {
-        const { prompt } = req.body;
+        const userId = req.user.id;
+        const { message } = req.body;
 
-        if (!prompt) {
-            return res.status(400).json({ error: "Prompt is required" });
+        // Get memory
+        let memory = await Memory.findOne({ userId });
+
+        // Detect name
+        const nameMatch = message.match(/my name is (\w+)/i);
+        if (nameMatch) {
+            const name = nameMatch[1];
+
+            if (!memory) {
+                memory = await Memory.create({ userId, name });
+            } else {
+                memory.name = name;
+                await memory.save();
+            }
         }
 
-        const groq = new Groq({
-            apiKey: process.env.GROQ_API_KEY,
-        });
+        // Build system prompt with memory
+        let systemPrompt = "You are Clarity AI.";
+        if (memory?.name) {
+            systemPrompt += ` The user's name is ${memory.name}.`;
+        }
 
-        const completion = await groq.chat.completions.create({
-            model: process.env.GROQ_MODEL,
-            messages: [
-                { role: "system", content: "You are a helpful assistant." },
-                { role: "user", content: prompt },
-            ],
-        });
+        const reply = await runAI(systemPrompt, message);
 
-        res.json({
-            success: true,
-            response: completion.choices[0].message.content,
-        });
-    } catch (error) {
+        res.json({ success: true, reply });
+
+    } catch (err) {
+        console.error("AI ERROR:", err);
         res.status(500).json({
             success: false,
-            error: error.message,
+            reply: "AI is temporarily unavailable"
         });
     }
 };
+
