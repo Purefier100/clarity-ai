@@ -87,14 +87,6 @@ async function sendMessage() {
 
     messageInput.value = "";
     addMessage(text, "user");
-
-    /* --- Name detection (safe) --- */
-    const nameMatch = text.match(/my name is\s+([a-zA-Z]+)/i);
-    if (nameMatch) {
-        userName = nameMatch[1];
-        localStorage.setItem("userName", userName);
-    }
-
     addMessage("Thinking…", "ai", true);
 
     try {
@@ -106,38 +98,28 @@ async function sendMessage() {
             },
             body: JSON.stringify({
                 sessionId: "clarity",
-                message: text
+                content: text   // ✅ FIX IS HERE
             })
         });
 
         const data = await res.json();
-
         removeLoading();
 
-        if (!res.ok) {
-            console.error("AI backend error:", data);
+        if (!res.ok || !data.reply) {
+            console.error(data);
             addMessage("⚠️ AI temporarily unavailable.", "ai");
             return;
         }
 
-        const reply =
-            data.reply ||
-            data.message ||
-            (typeof data === "string" ? data : null);
-
-        if (!reply) {
-            addMessage("⚠️ Empty AI response.", "ai");
-            return;
-        }
-
-        addMessage(reply, "ai");
+        addMessage(data.reply, "ai");
 
     } catch (err) {
-        console.error("Network error:", err);
+        console.error(err);
         removeLoading();
-        addMessage("⚠️ Network error. Please retry.", "ai");
+        addMessage("⚠️ Network error.", "ai");
     }
 }
+
 
 /* ---------- UI HELPERS ---------- */
 function addMessage(text, role, loading = false) {
