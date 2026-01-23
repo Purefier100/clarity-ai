@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <title>Clarity AI</title>
 
-    <!-- ✅ MOBILE RESPONSIVE -->
+    <!-- MOBILE -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <link rel="stylesheet" href="style.css" />
@@ -13,21 +13,18 @@
 
 <body>
 
-    <!-- LANDING -->
-    <div id="landing" class="container">
+    <!-- LOGIN ONLY -->
+    <div id="auth" class="container">
         <h1 class="brand">Clarity AI</h1>
-        <p class="tagline">Think clearly. Ask better. Get answers.</p>
-        <button id="getStarted" onclick="showAuth()">Get Started</button>
-    </div>
+        <p class="tagline">Login to continue</p>
 
-    <!-- AUTH -->
-    <div id="auth" class="container hidden">
         <input id="email" placeholder="Email" />
         <input id="password" type="password" placeholder="Password" />
+
         <button id="loginBtn">Login</button>
     </div>
 
-    <!-- CHAT -->
+    <!-- CHAT (hidden until login) -->
     <div id="chat" class="container hidden">
         <h2>Clarity AI</h2>
 
@@ -39,7 +36,6 @@
         </div>
     </div>
 
-    <!-- JS MUST LOAD LAST -->
     <script src="app.js"></script>
 </body>
 
