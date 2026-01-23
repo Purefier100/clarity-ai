@@ -1,8 +1,9 @@
 import express from "express";
-import { generateText } from "../controllers/ai.controller.js";
+import { chatAI } from "../controllers/ai.controller.js";
+import { protect } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-router.post("/generate", generateText);
+router.post("/chat", protect, chatAI);
 
 export default router;

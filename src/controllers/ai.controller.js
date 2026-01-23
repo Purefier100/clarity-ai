@@ -1,47 +1,30 @@
-import Memory from "../models/Memory.js";
+const memoryStore = {}; // TEMP memory (RAM)
 
 export const chatAI = async (req, res) => {
-    try {
-        const { message } = req.body;
-        const userId = req.user.id;
+    const { sessionId, message } = req.body;
 
-        let memory = await Memory.findOne({ userId });
-        if (!memory) memory = await Memory.create({ userId });
-
-        // Detect name
-        const nameMatch = message.match(/my name is ([a-zA-Z]+)/i);
-        if (nameMatch) {
-            memory.name = nameMatch[1];
-            await memory.save();
-
-            return res.json({
-                success: true,
-                reply: `Nice to meet you, ${memory.name}. I’ll remember your name.`
-            });
-        }
-
-        // Recall name
-        if (/what is my name/i.test(message)) {
-            return res.json({
-                success: true,
-                reply: memory.name
-                    ? `Your name is ${memory.name}.`
-                    : "You haven't told me your name yet."
-            });
-        }
-
-        // Default response
-        res.json({
-            success: true,
-            reply: memory.name
-                ? `How can I help you today, ${memory.name}?`
-                : "How can I help you today?"
-        });
-
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ success: false, error: "AI error" });
+    if (!sessionId) {
+        return res.status(400).json({ error: "sessionId required" });
     }
-};
 
+    // Init memory
+    if (!memoryStore[sessionId]) {
+        memoryStore[sessionId] = [];
+    }
+
+    // Save user message
+    memoryStore[sessionId].push({ role: "user", content: message });
+
+    // Build prompt with memory
+    const prompt = memoryStore[sessionId]
+        .map(m => `${m.role}: ${m.content}`)
+        .join("\n");
+
+    const reply = await generateAIReply(prompt);
+
+    // Save AI reply
+    memoryStore[sessionId].push({ role: "assistant", content: reply });
+
+    res.json({ reply });
+};
 
