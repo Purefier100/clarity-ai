@@ -1,17 +1,49 @@
 const API = "https://ai-chat-api-a3wn.onrender.com";
 
-/* ---------- TOKEN ---------- */
+/* ---------- STATE ---------- */
 let token = localStorage.getItem("token") || "";
+
+/* ---------- INITIAL PAGE LOAD ---------- */
+window.onload = () => {
+    if (token) {
+        showChat();
+    } else {
+        showLanding();
+    }
+};
+
+/* ---------- SCREEN HELPERS ---------- */
+function showLanding() {
+    hideAll();
+    document.getElementById("landing").classList.remove("hidden");
+}
+
+function showAuth() {
+    hideAll();
+    document.getElementById("auth").classList.remove("hidden");
+}
+
+function showChat() {
+    hideAll();
+    document.getElementById("chat").classList.remove("hidden");
+}
+
+function hideAll() {
+    ["landing", "auth", "chat"].forEach(id =>
+        document.getElementById(id).classList.add("hidden")
+    );
+}
+
+/* ---------- BUTTON BINDINGS ---------- */
+document.getElementById("startBtn").onclick = showAuth;
+document.getElementById("sendBtn").onclick = sendMessage;
 
 /* ---------- AUTH ---------- */
 document.getElementById("registerBtn").onclick = async () => {
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
+    const email = emailInput().value;
+    const password = passwordInput().value;
 
-    if (!email || !password) {
-        alert("Email and password required");
-        return;
-    }
+    if (!email || !password) return alert("Email and password required");
 
     const res = await fetch(`${API}/api/auth/register`, {
         method: "POST",
@@ -19,22 +51,15 @@ document.getElementById("registerBtn").onclick = async () => {
         body: JSON.stringify({ email, password })
     });
 
-    if (!res.ok) {
-        alert("Registration failed");
-        return;
-    }
-
+    if (!res.ok) return alert("Registration failed");
     alert("Account created. Please login.");
 };
 
 document.getElementById("loginBtn").onclick = async () => {
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
+    const email = emailInput().value;
+    const password = passwordInput().value;
 
-    if (!email || !password) {
-        alert("Email and password required");
-        return;
-    }
+    if (!email || !password) return alert("Email and password required");
 
     const res = await fetch(`${API}/api/auth/login`, {
         method: "POST",
@@ -43,28 +68,24 @@ document.getElementById("loginBtn").onclick = async () => {
     });
 
     const data = await res.json();
-
-    if (!res.ok || !data.token) {
-        alert("Login failed");
-        return;
-    }
+    if (!data.token) return alert("Login failed");
 
     token = data.token;
     localStorage.setItem("token", token);
-
-    document.getElementById("auth").classList.add("hidden");
-    document.getElementById("chat").classList.remove("hidden");
+    showChat();
 };
 
-function showAuth() {
-    document.getElementById("landing").classList.add("hidden");
-    document.getElementById("auth").classList.remove("hidden");
+function emailInput() {
+    return document.getElementById("email");
 }
-document.getElementById("getStartedBtn")?.addEventListener("click", showAuth);
-
+function passwordInput() {
+    return document.getElementById("password");
+}
 
 /* ---------- CHAT ---------- */
 async function sendMessage() {
+    if (!token) return alert("Please login first");
+
     const input = document.getElementById("messageInput");
     const text = input.value.trim();
     if (!text) return;
@@ -88,38 +109,34 @@ async function sendMessage() {
         });
 
         const data = await res.json();
-
         loading.remove();
 
         if (!res.ok || !data.reply) {
-            typeMessage("ai", "⚠️ AI is currently unavailable. Try again.");
-            return;
+            return typeMessage("ai", "⚠️ AI unavailable. Try again.");
         }
 
         typeMessage("ai", data.reply);
-    } catch (err) {
+    } catch {
         loading.remove();
-        typeMessage("ai", "⚠️ Network error. Please try again.");
+        typeMessage("ai", "⚠️ Network error.");
     }
 }
 
-/* ---------- UI HELPERS ---------- */
+/* ---------- UI ---------- */
 function addMessage(role, text, loading = false) {
     const messages = document.getElementById("messages");
-
     const msg = document.createElement("div");
-    msg.className = `message ${role}`;
 
+    msg.className = `message ${role}`;
     msg.innerHTML = `
-        <div class="avatar">${role === "ai" ? "🤖" : "🧑"}</div>
-        <div class="bubble">${text}</div>
-    `;
+    <div class="avatar">${role === "ai" ? "🤖" : "🧑"}</div>
+    <div class="bubble">${text}</div>
+  `;
 
     if (loading) msg.classList.add("loading");
 
     messages.appendChild(msg);
     messages.scrollTop = messages.scrollHeight;
-
     return msg;
 }
 
@@ -129,8 +146,7 @@ function typeMessage(role, text) {
 
     let i = 0;
     const interval = setInterval(() => {
-        bubble.textContent += text[i] || "";
-        i++;
+        bubble.textContent += text[i++] || "";
         if (i >= text.length) clearInterval(interval);
     }, 20);
 }

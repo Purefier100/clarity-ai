@@ -3,51 +3,43 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>AI Chat App</title>
+    <title>Clarity AI</title>
     <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
 
-    <body>
+    <!-- LANDING -->
+    <div id="landing" class="container">
+        <h1 class="brand">Clarity AI</h1>
+        <p class="tagline">Think clearly. Ask better. Get answers.</p>
+        <button id="startBtn">Get Started</button>
+    </div>
 
-        <!-- LANDING -->
-        <div id="landing" class="container">
-            <h1 class="brand">Clarity AI</h1>
-            <p class="tagline">Think clearly. Ask better. Get answers.</p>
+    <!-- AUTH -->
+    <div id="auth" class="container hidden">
+        <h2>Welcome Back</h2>
 
-            <button onclick="showAuth()">Get Started</button>
+        <input id="email" placeholder="Email" />
+        <input id="password" type="password" placeholder="Password" />
+
+        <button id="registerBtn">Create Account</button>
+        <button id="loginBtn">Login</button>
+    </div>
+
+    <!-- CHAT -->
+    <div id="chat" class="container hidden">
+        <h2>Clarity AI</h2>
+
+        <div id="messages"></div>
+
+        <div class="input-area">
+            <input id="messageInput" placeholder="Ask Clarity…" />
+            <button id="sendBtn">Send</button>
         </div>
+    </div>
 
-        <!-- AUTH -->
-        <div id="auth" class="container hidden">
-            <h2>Welcome Back</h2>
-
-            <input id="email" placeholder="Email" />
-            <input id="password" type="password" placeholder="Password" />
-
-            <button id="registerBtn">Create Account</button>
-            <button id="loginBtn">Login</button>
-        </div>
-
-        <!-- CHAT -->
-        <div id="chat" class="container hidden">
-            <h2>Clarity AI</h2>
-
-            <div id="messages"></div>
-
-            <div class="input-area">
-                <input id="messageInput" placeholder="Ask Clarity…" />
-                <button id="getStartedBtn">Get Started</button>
-
-            </div>
-        </div>
-
-
-
-
-        <!-- IMPORTANT: JS must load AFTER HTML -->
-        <script src="app.js"></script>
-    </body>
+    <script src="app.js"></script>
+</body>
 
 </html>
