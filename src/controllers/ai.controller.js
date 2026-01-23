@@ -1,42 +1,46 @@
 import Memory from "../models/Memory.js";
 
-export const chat = async (req, res) => {
+export const chatAI = async (req, res) => {
     try {
+        const { message, sessionId } = req.body;
         const userId = req.user.id;
-        const { message } = req.body;
 
-        // Get memory
+        // 1️⃣ Find or create memory
         let memory = await Memory.findOne({ userId });
+        if (!memory) {
+            memory = await Memory.create({ userId });
+        }
 
-        // Detect name
-        const nameMatch = message.match(/my name is (\w+)/i);
-        if (nameMatch) {
-            const name = nameMatch[1];
+        // 2️⃣ Detect name
+        const match = message.match(/my name is (\w+)/i);
+        if (match) {
+            memory.name = match[1];
+            await memory.save();
+        }
 
-            if (!memory) {
-                memory = await Memory.create({ userId, name });
+        // 3️⃣ If user asks for name
+        if (/what is my name/i.test(message)) {
+            if (memory.name) {
+                return res.json({
+                    success: true,
+                    reply: `Your name is ${memory.name}.`
+                });
             } else {
-                memory.name = name;
-                await memory.save();
+                return res.json({
+                    success: true,
+                    reply: "You haven't told me your name yet."
+                });
             }
         }
 
-        // Build system prompt with memory
-        let systemPrompt = "You are Clarity AI.";
-        if (memory?.name) {
-            systemPrompt += ` The user's name is ${memory.name}.`;
-        }
-
-        const reply = await runAI(systemPrompt, message);
+        // 4️⃣ Normal AI response
+        const reply = `Hello${memory.name ? " " + memory.name : ""}. How can I help you today?`;
 
         res.json({ success: true, reply });
 
     } catch (err) {
-        console.error("AI ERROR:", err);
-        res.status(500).json({
-            success: false,
-            reply: "AI is temporarily unavailable"
-        });
+        console.error(err);
+        res.status(500).json({ success: false, error: "AI error" });
     }
 };
 
