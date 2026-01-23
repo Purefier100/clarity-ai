@@ -2,7 +2,6 @@ const API = "https://ai-chat-api-a3wn.onrender.com";
 
 /* ---------- STATE ---------- */
 let token = localStorage.getItem("token");
-let userName = localStorage.getItem("userName") || null;
 
 /* ---------- ELEMENTS ---------- */
 const authOverlay = document.getElementById("authOverlay");
@@ -41,7 +40,7 @@ loginBtn.onclick = async () => {
         token = data.token;
         localStorage.setItem("token", token);
         authOverlay.style.display = "none";
-    } catch (err) {
+    } catch {
         alert("Network error during login");
     }
 };
@@ -82,12 +81,14 @@ async function sendMessage() {
         return;
     }
 
-    const text = messageInput.value.trim();
-    if (!text) return;
+    let text = messageInput.value;
+    if (!text || !text.trim()) return;
+
+    text = text.trim(); // GUARANTEED NON-EMPTY
 
     messageInput.value = "";
     addMessage(text, "user");
-    addMessage("Thinking…", "ai", true);
+    const loading = addMessage("Thinking…", "ai", true);
 
     try {
         const res = await fetch(`${API}/api/ai/chat`, {
@@ -98,15 +99,16 @@ async function sendMessage() {
             },
             body: JSON.stringify({
                 sessionId: "clarity",
-                content: text   // ✅ FIX IS HERE
+                content: text,      // ✅ REQUIRED
+                message: text       // ✅ BACKWARD COMPATIBILITY
             })
         });
 
         const data = await res.json();
-        removeLoading();
+        loading.remove();
 
         if (!res.ok || !data.reply) {
-            console.error(data);
+            console.error("AI backend error:", data);
             addMessage("⚠️ AI temporarily unavailable.", "ai");
             return;
         }
@@ -114,12 +116,11 @@ async function sendMessage() {
         addMessage(data.reply, "ai");
 
     } catch (err) {
-        console.error(err);
-        removeLoading();
-        addMessage("⚠️ Network error.", "ai");
+        console.error("Network error:", err);
+        loading.remove();
+        addMessage("⚠️ Network error. Try again.", "ai");
     }
 }
-
 
 /* ---------- UI HELPERS ---------- */
 function addMessage(text, role, loading = false) {
@@ -129,9 +130,5 @@ function addMessage(text, role, loading = false) {
     div.textContent = text;
     messages.appendChild(div);
     messages.scrollTop = messages.scrollHeight;
-}
-
-function removeLoading() {
-    const loading = document.querySelector(".message.loading");
-    if (loading) loading.remove();
+    return div;
 }
