@@ -18,7 +18,11 @@ const messages = document.getElementById("messages");
 loginBtn.onclick = async () => {
     const email = emailInput.value.trim();
     const password = passwordInput.value.trim();
-    if (!email || !password) return alert("Email and password required");
+
+    if (!email || !password) {
+        alert("Email and password required");
+        return;
+    }
 
     try {
         const res = await fetch(`${API}/api/auth/login`, {
@@ -28,6 +32,7 @@ loginBtn.onclick = async () => {
         });
 
         const data = await res.json();
+
         if (!res.ok || !data.token) {
             alert(data.error || "Login failed");
             return;
@@ -36,7 +41,8 @@ loginBtn.onclick = async () => {
         token = data.token;
         localStorage.setItem("token", token);
         authOverlay.style.display = "none";
-    } catch {
+    } catch (err) {
+        console.error(err);
         alert("Network error during login");
     }
 };
@@ -44,7 +50,11 @@ loginBtn.onclick = async () => {
 registerBtn.onclick = async () => {
     const email = emailInput.value.trim();
     const password = passwordInput.value.trim();
-    if (!email || !password) return alert("Email and password required");
+
+    if (!email || !password) {
+        alert("Email and password required");
+        return;
+    }
 
     try {
         const res = await fetch(`${API}/api/auth/register`, {
@@ -53,9 +63,14 @@ registerBtn.onclick = async () => {
             body: JSON.stringify({ email, password })
         });
 
-        if (!res.ok) return alert("Registration failed");
+        if (!res.ok) {
+            alert("Registration failed");
+            return;
+        }
+
         alert("Account created. Please login.");
-    } catch {
+    } catch (err) {
+        console.error(err);
         alert("Network error during registration");
     }
 };
@@ -69,34 +84,30 @@ async function sendMessage() {
         return;
     }
 
-    if (isSending) return; // ⛔ prevent double send
+    if (isSending) return;
     isSending = true;
 
-    let text = messageInput.value;
-    if (!text || !text.trim()) {
+    const text = messageInput.value.trim();
+    if (!text) {
         isSending = false;
         return;
     }
 
-    text = text.trim();
     messageInput.value = "";
-
     addMessage(text, "user");
     const loading = addMessage("Thinking…", "ai", true);
 
     try {
-        const payload = {
-            sessionId: "clarity",
-            content: text // ✅ ONLY what backend requires
-        };
-
         const res = await fetch(`${API}/api/ai/chat`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`
             },
-            body: JSON.stringify(payload)
+            body: JSON.stringify({
+                sessionId: "clarity", // ✅ REQUIRED
+                message: text         // ✅ REQUIRED (THIS FIXES THE ERROR)
+            })
         });
 
         const data = await res.json();
@@ -129,4 +140,5 @@ function addMessage(text, role, loading = false) {
     messages.scrollTop = messages.scrollHeight;
     return div;
 }
+
 
