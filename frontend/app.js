@@ -88,7 +88,7 @@ async function sendMessage() {
                 Authorization: `Bearer ${token}`
             },
             body: JSON.stringify({
-                sessionId: "prod-user",
+                sessionId: Date.now().toString(),
                 message: text
             })
         });
