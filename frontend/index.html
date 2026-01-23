@@ -10,18 +10,27 @@
 
 <body>
 
-    <!-- LOGIN -->
-    <div id="auth" class="auth-card">
-        <h1 class="brand">Clarity AI</h1>
-        <p class="tagline">Login to continue</p>
+    <!-- AUTH OVERLAY -->
+    <div id="authOverlay">
+        <div class="auth-card">
+            <h1 class="brand">Clarity AI</h1>
+            <p class="tagline" id="authTitle">Login to continue</p>
 
-        <input id="email" placeholder="Email" />
-        <input id="password" type="password" placeholder="Password" />
-        <button id="loginBtn">Login</button>
+            <input id="email" placeholder="Email" />
+            <input id="password" type="password" placeholder="Password" />
+
+            <button id="loginBtn">Login</button>
+            <button id="registerBtn" class="hidden">Create Account</button>
+
+            <p class="switch">
+                <span id="toggleText">Don’t have an account?</span>
+                <button id="toggleAuth">Register</button>
+            </p>
+        </div>
     </div>
 
     <!-- CHAT -->
-    <div id="chat" class="chat hidden">
+    <div id="chat">
         <header>Clarity AI</header>
 
         <div id="messages"></div>
