@@ -1,49 +1,20 @@
 const API = "https://ai-chat-api-a3wn.onrender.com";
 
 /* ---------- STATE ---------- */
-let token = localStorage.getItem("token") || "";
-let isLogin = true;
+let token = localStorage.getItem("token");
+let userName = localStorage.getItem("userName") || null;
 
-/* ---------- DOM ELEMENTS ---------- */
+/* ---------- ELEMENTS ---------- */
 const authOverlay = document.getElementById("authOverlay");
-const authTitle = document.getElementById("authTitle");
-const toggleText = document.getElementById("toggleText");
-const toggleBtn = document.getElementById("toggleAuth");
-
-const emailInput = document.getElementById("email");
-const passwordInput = document.getElementById("password");
-
 const loginBtn = document.getElementById("loginBtn");
 const registerBtn = document.getElementById("registerBtn");
-
-const messageInput = document.getElementById("messageInput");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
 const sendBtn = document.getElementById("sendBtn");
+const messageInput = document.getElementById("messageInput");
 const messages = document.getElementById("messages");
 
-/* ---------- AUTO SHOW CHAT IF LOGGED IN ---------- */
-if (token) {
-    authOverlay.style.display = "none";
-}
-
-/* ---------- TOGGLE LOGIN / REGISTER ---------- */
-toggleBtn.onclick = () => {
-    isLogin = !isLogin;
-
-    loginBtn.classList.toggle("hidden", !isLogin);
-    registerBtn.classList.toggle("hidden", isLogin);
-
-    authTitle.textContent = isLogin
-        ? "Login to continue"
-        : "Create an account";
-
-    toggleText.textContent = isLogin
-        ? "Don’t have an account?"
-        : "Already have an account?";
-
-    toggleBtn.textContent = isLogin ? "Register" : "Login";
-};
-
-/* ---------- LOGIN ---------- */
+/* ---------- AUTH ---------- */
 loginBtn.onclick = async () => {
     const email = emailInput.value.trim();
     const password = passwordInput.value.trim();
@@ -69,15 +40,12 @@ loginBtn.onclick = async () => {
 
         token = data.token;
         localStorage.setItem("token", token);
-
         authOverlay.style.display = "none";
     } catch (err) {
-        console.error(err);
-        alert("Network error");
+        alert("Network error during login");
     }
 };
 
-/* ---------- REGISTER ---------- */
 registerBtn.onclick = async () => {
     const email = emailInput.value.trim();
     const password = passwordInput.value.trim();
@@ -100,20 +68,34 @@ registerBtn.onclick = async () => {
         }
 
         alert("Account created. Please login.");
-        toggleBtn.click();
-    } catch (err) {
-        console.error(err);
-        alert("Network error");
+    } catch {
+        alert("Network error during registration");
     }
 };
 
 /* ---------- CHAT ---------- */
-sendBtn.onclick = async () => {
+sendBtn.onclick = sendMessage;
+
+async function sendMessage() {
+    if (!token) {
+        addMessage("⚠️ Please login first.", "ai");
+        return;
+    }
+
     const text = messageInput.value.trim();
     if (!text) return;
 
     messageInput.value = "";
     addMessage(text, "user");
+
+    /* --- Name detection (safe) --- */
+    const nameMatch = text.match(/my name is\s+([a-zA-Z]+)/i);
+    if (nameMatch) {
+        userName = nameMatch[1];
+        localStorage.setItem("userName", userName);
+    }
+
+    addMessage("Thinking…", "ai", true);
 
     try {
         const res = await fetch(`${API}/api/ai/chat`, {
@@ -129,19 +111,45 @@ sendBtn.onclick = async () => {
         });
 
         const data = await res.json();
-        addMessage(data.reply || "⚠️ AI error", "ai");
+
+        removeLoading();
+
+        if (!res.ok) {
+            console.error("AI backend error:", data);
+            addMessage("⚠️ AI temporarily unavailable.", "ai");
+            return;
+        }
+
+        const reply =
+            data.reply ||
+            data.message ||
+            (typeof data === "string" ? data : null);
+
+        if (!reply) {
+            addMessage("⚠️ Empty AI response.", "ai");
+            return;
+        }
+
+        addMessage(reply, "ai");
+
     } catch (err) {
-        console.error(err);
-        addMessage("⚠️ Network error", "ai");
+        console.error("Network error:", err);
+        removeLoading();
+        addMessage("⚠️ Network error. Please retry.", "ai");
     }
-};
+}
 
 /* ---------- UI HELPERS ---------- */
-function addMessage(text, role) {
+function addMessage(text, role, loading = false) {
     const div = document.createElement("div");
     div.className = `message ${role}`;
+    if (loading) div.classList.add("loading");
     div.textContent = text;
-
     messages.appendChild(div);
     messages.scrollTop = messages.scrollHeight;
+}
+
+function removeLoading() {
+    const loading = document.querySelector(".message.loading");
+    if (loading) loading.remove();
 }
