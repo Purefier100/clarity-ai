@@ -4,6 +4,10 @@
 <head>
     <meta charset="UTF-8" />
     <title>Clarity AI</title>
+
+    <!-- ✅ MOBILE RESPONSIVE -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <link rel="stylesheet" href="style.css" />
 </head>
 
@@ -13,17 +17,13 @@
     <div id="landing" class="container">
         <h1 class="brand">Clarity AI</h1>
         <p class="tagline">Think clearly. Ask better. Get answers.</p>
-        <button onclick="showAuth()">Get Started</button>
+        <button id="getStarted" onclick="showAuth()">Get Started</button>
     </div>
 
     <!-- AUTH -->
     <div id="auth" class="container hidden">
-        <h2>Welcome Back</h2>
-
         <input id="email" placeholder="Email" />
         <input id="password" type="password" placeholder="Password" />
-
-        <button id="registerBtn">Create Account</button>
         <button id="loginBtn">Login</button>
     </div>
 

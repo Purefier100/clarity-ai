@@ -3,14 +3,25 @@ const API = "https://ai-chat-api-a3wn.onrender.com";
 /* ---------- TOKEN ---------- */
 let token = localStorage.getItem("token") || "";
 
+/* ---------- SIMPLE MEMORY ---------- */
+let memory = {
+    name: localStorage.getItem("userName") || null,
+    history: []
+};
+
 /* ---------- PAGE SWITCH ---------- */
 function showAuth() {
-    document.getElementById("landing").classList.add("hidden");
-    document.getElementById("auth").classList.remove("hidden");
+    document.getElementById("landing")?.classList.add("hidden");
+    document.getElementById("auth")?.classList.remove("hidden");
+}
+
+function showChat() {
+    document.getElementById("auth")?.classList.add("hidden");
+    document.getElementById("chat")?.classList.remove("hidden");
 }
 
 /* ---------- AUTH ---------- */
-document.getElementById("registerBtn").onclick = async () => {
+document.getElementById("registerBtn")?.addEventListener("click", async () => {
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
 
@@ -31,9 +42,9 @@ document.getElementById("registerBtn").onclick = async () => {
     }
 
     alert("Account created. Please login.");
-};
+});
 
-document.getElementById("loginBtn").onclick = async () => {
+document.getElementById("loginBtn")?.addEventListener("click", async () => {
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
 
@@ -55,14 +66,11 @@ document.getElementById("loginBtn").onclick = async () => {
         return;
     }
 
-    // ✅ SAVE TOKEN
     token = data.token;
     localStorage.setItem("token", token);
 
-    // ✅ SWITCH UI
-    document.getElementById("auth").classList.add("hidden");
-    document.getElementById("chat").classList.remove("hidden");
-};
+    showChat();
+});
 
 /* ---------- CHAT ---------- */
 async function sendMessage() {
@@ -78,7 +86,22 @@ async function sendMessage() {
     input.value = "";
     addMessage("user", text);
 
+    /* ---- Detect name ---- */
+    const nameMatch = text.match(/my name is\s+([a-zA-Z]+)/i);
+    if (nameMatch) {
+        memory.name = nameMatch[1];
+        localStorage.setItem("userName", memory.name);
+    }
+
     const loading = addMessage("ai", "Thinking…", true);
+
+    /* ---- Build context ---- */
+    const context = `
+User name: ${memory.name || "unknown"}
+Conversation history:
+${memory.history.join("\n")}
+User says: ${text}
+`;
 
     try {
         const res = await fetch(`${API}/api/ai/chat`, {
@@ -88,8 +111,8 @@ async function sendMessage() {
                 Authorization: `Bearer ${token}`
             },
             body: JSON.stringify({
-                sessionId: Date.now().toString(),
-                message: text
+                sessionId: "clarity-session", // ✅ FIXED session
+                message: context
             })
         });
 
@@ -100,6 +123,9 @@ async function sendMessage() {
             addMessage("ai", "⚠️ AI unavailable. Try again.");
             return;
         }
+
+        memory.history.push(`User: ${text}`);
+        memory.history.push(`AI: ${data.reply}`);
 
         typeMessage("ai", data.reply);
     } catch (err) {
@@ -139,4 +165,3 @@ function typeMessage(role, text) {
         if (i >= text.length) clearInterval(interval);
     }, 20);
 }
-
