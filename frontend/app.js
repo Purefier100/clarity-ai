@@ -1,7 +1,8 @@
 const API = "https://ai-chat-api-a3wn.onrender.com";
 
 /* ---------- STATE ---------- */
-let token = localStorage.getItem("token");
+let token = localStorage.getItem("token") || null;
+let isSending = false;
 
 /* ---------- ELEMENTS ---------- */
 const authOverlay = document.getElementById("authOverlay");
@@ -17,11 +18,7 @@ const messages = document.getElementById("messages");
 loginBtn.onclick = async () => {
     const email = emailInput.value.trim();
     const password = passwordInput.value.trim();
-
-    if (!email || !password) {
-        alert("Email and password required");
-        return;
-    }
+    if (!email || !password) return alert("Email and password required");
 
     try {
         const res = await fetch(`${API}/api/auth/login`, {
@@ -31,7 +28,6 @@ loginBtn.onclick = async () => {
         });
 
         const data = await res.json();
-
         if (!res.ok || !data.token) {
             alert(data.error || "Login failed");
             return;
@@ -48,11 +44,7 @@ loginBtn.onclick = async () => {
 registerBtn.onclick = async () => {
     const email = emailInput.value.trim();
     const password = passwordInput.value.trim();
-
-    if (!email || !password) {
-        alert("Email and password required");
-        return;
-    }
+    if (!email || !password) return alert("Email and password required");
 
     try {
         const res = await fetch(`${API}/api/auth/register`, {
@@ -61,11 +53,7 @@ registerBtn.onclick = async () => {
             body: JSON.stringify({ email, password })
         });
 
-        if (!res.ok) {
-            alert("Registration failed");
-            return;
-        }
-
+        if (!res.ok) return alert("Registration failed");
         alert("Account created. Please login.");
     } catch {
         alert("Network error during registration");
@@ -81,20 +69,25 @@ async function sendMessage() {
         return;
     }
 
+    if (isSending) return; // ⛔ prevent double send
+    isSending = true;
+
     let text = messageInput.value;
-    if (!text || !text.trim()) return;
+    if (!text || !text.trim()) {
+        isSending = false;
+        return;
+    }
 
-    text = text.trim(); // hard guarantee
-
+    text = text.trim();
     messageInput.value = "";
+
     addMessage(text, "user");
     const loading = addMessage("Thinking…", "ai", true);
 
     try {
         const payload = {
             sessionId: "clarity",
-            message: text,   // ✅ backend expects this
-            content: text    // ✅ mongoose validation expects this
+            content: text // ✅ ONLY what backend requires
         };
 
         const res = await fetch(`${API}/api/ai/chat`, {
@@ -108,16 +101,11 @@ async function sendMessage() {
 
         const data = await res.json();
         loading.remove();
+        isSending = false;
 
-        if (!res.ok) {
+        if (!res.ok || !data.reply) {
             console.error("Backend error:", data);
             addMessage("⚠️ AI temporarily unavailable.", "ai");
-            return;
-        }
-
-        if (!data.reply) {
-            console.error("No reply field:", data);
-            addMessage("⚠️ AI response malformed.", "ai");
             return;
         }
 
@@ -126,10 +114,10 @@ async function sendMessage() {
     } catch (err) {
         console.error("Network error:", err);
         loading.remove();
+        isSending = false;
         addMessage("⚠️ Network error. Try again.", "ai");
     }
 }
-
 
 /* ---------- UI HELPERS ---------- */
 function addMessage(text, role, loading = false) {
@@ -141,3 +129,4 @@ function addMessage(text, role, loading = false) {
     messages.scrollTop = messages.scrollHeight;
     return div;
 }
+
