@@ -4,11 +4,10 @@ const memorySchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required: true
+        required: true,
+        unique: true
     },
-    name: {
-        type: String
-    }
+    name: String
 });
 
 export default mongoose.model("Memory", memorySchema);
