@@ -1,57 +1,22 @@
 const API = "https://ai-chat-api-a3wn.onrender.com";
 
-/* ---------- TOKEN ---------- */
-let token = localStorage.getItem("token") || "";
+let token = localStorage.getItem("token");
+let userName = localStorage.getItem("userName") || null;
 
-/* ---------- SIMPLE MEMORY ---------- */
-let memory = {
-    name: localStorage.getItem("userName") || null,
-    history: []
-};
+/* ---------- UI ---------- */
+const auth = document.getElementById("auth");
+const chat = document.getElementById("chat");
+const messages = document.getElementById("messages");
 
-/* ---------- PAGE SWITCH ---------- */
-function showAuth() {
-    document.getElementById("landing")?.classList.add("hidden");
-    document.getElementById("auth")?.classList.remove("hidden");
+if (token) {
+    auth.classList.add("hidden");
+    chat.classList.remove("hidden");
 }
 
-function showChat() {
-    document.getElementById("auth")?.classList.add("hidden");
-    document.getElementById("chat")?.classList.remove("hidden");
-}
-
-/* ---------- AUTH ---------- */
-document.getElementById("registerBtn")?.addEventListener("click", async () => {
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
-
-    if (!email || !password) {
-        alert("Email and password required");
-        return;
-    }
-
-    const res = await fetch(`${API}/api/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-    });
-
-    if (!res.ok) {
-        alert("Registration failed");
-        return;
-    }
-
-    alert("Account created. Please login.");
-});
-
-document.getElementById("loginBtn")?.addEventListener("click", async () => {
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
-
-    if (!email || !password) {
-        alert("Email and password required");
-        return;
-    }
+/* ---------- LOGIN ---------- */
+document.getElementById("loginBtn").onclick = async () => {
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
 
     const res = await fetch(`${API}/api/auth/login`, {
         method: "POST",
@@ -60,48 +25,33 @@ document.getElementById("loginBtn")?.addEventListener("click", async () => {
     });
 
     const data = await res.json();
-
-    if (!res.ok || !data.token) {
-        alert(data.error || "Login failed");
-        return;
-    }
+    if (!data.token) return alert("Login failed");
 
     token = data.token;
     localStorage.setItem("token", token);
 
-    showChat();
-});
+    auth.classList.add("hidden");
+    chat.classList.remove("hidden");
+};
 
 /* ---------- CHAT ---------- */
-async function sendMessage() {
-    if (!token) {
-        addMessage("ai", "⚠️ Please login first.");
-        return;
-    }
+document.getElementById("sendBtn").onclick = sendMessage;
 
-    const input = document.getElementById("messageInput");
+async function sendMessage() {
+    const input = messageInput;
     const text = input.value.trim();
     if (!text) return;
 
     input.value = "";
-    addMessage("user", text);
+    add("user", text);
 
-    /* ---- Detect name ---- */
-    const nameMatch = text.match(/my name is\s+([a-zA-Z]+)/i);
-    if (nameMatch) {
-        memory.name = nameMatch[1];
-        localStorage.setItem("userName", memory.name);
+    const match = text.match(/my name is\s+(\w+)/i);
+    if (match) {
+        userName = match[1];
+        localStorage.setItem("userName", userName);
     }
 
-    const loading = addMessage("ai", "Thinking…", true);
-
-    /* ---- Build context ---- */
-    const context = `
-User name: ${memory.name || "unknown"}
-Conversation history:
-${memory.history.join("\n")}
-User says: ${text}
-`;
+    add("ai", "Thinking…");
 
     try {
         const res = await fetch(`${API}/api/ai/chat`, {
@@ -111,57 +61,26 @@ User says: ${text}
                 Authorization: `Bearer ${token}`
             },
             body: JSON.stringify({
-                sessionId: "clarity-session", // ✅ FIXED session
-                message: context
+                sessionId: "clarity-main",
+                message: `User name: ${userName || "unknown"}\nUser says: ${text}`
             })
         });
 
         const data = await res.json();
-        loading.remove();
+        messages.lastChild.remove();
 
-        if (!res.ok || !data.reply) {
-            addMessage("ai", "⚠️ AI unavailable. Try again.");
-            return;
-        }
-
-        memory.history.push(`User: ${text}`);
-        memory.history.push(`AI: ${data.reply}`);
-
-        typeMessage("ai", data.reply);
-    } catch (err) {
-        loading.remove();
-        addMessage("ai", "⚠️ Network error.");
+        add("ai", data.reply || "AI unavailable. Try again.");
+    } catch {
+        messages.lastChild.remove();
+        add("ai", "Server waking up. Try again.");
     }
 }
 
-/* ---------- UI HELPERS ---------- */
-function addMessage(role, text, loading = false) {
-    const messages = document.getElementById("messages");
-
-    const msg = document.createElement("div");
-    msg.className = `message ${role}`;
-
-    msg.innerHTML = `
-    <div class="avatar">${role === "ai" ? "🤖" : "🧑"}</div>
-    <div class="bubble">${text}</div>
-  `;
-
-    if (loading) msg.classList.add("loading");
-
-    messages.appendChild(msg);
+/* ---------- HELPERS ---------- */
+function add(role, text) {
+    const div = document.createElement("div");
+    div.className = `message ${role}`;
+    div.innerHTML = `<div class="bubble">${text}</div>`;
+    messages.appendChild(div);
     messages.scrollTop = messages.scrollHeight;
-
-    return msg;
-}
-
-function typeMessage(role, text) {
-    const msg = addMessage(role, "");
-    const bubble = msg.querySelector(".bubble");
-
-    let i = 0;
-    const interval = setInterval(() => {
-        bubble.textContent += text[i] || "";
-        i++;
-        if (i >= text.length) clearInterval(interval);
-    }, 20);
 }

@@ -4,35 +4,31 @@
 <head>
     <meta charset="UTF-8" />
     <title>Clarity AI</title>
-
-    <!-- MOBILE -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
 
-    <!-- LOGIN ONLY -->
-    <div id="auth" class="container">
+    <!-- LOGIN -->
+    <div id="auth" class="auth-card">
         <h1 class="brand">Clarity AI</h1>
         <p class="tagline">Login to continue</p>
 
         <input id="email" placeholder="Email" />
         <input id="password" type="password" placeholder="Password" />
-
         <button id="loginBtn">Login</button>
     </div>
 
     <!-- CHAT -->
-    <div id="chat" class="container hidden">
-        <h2>Clarity AI</h2>
+    <div id="chat" class="chat hidden">
+        <header>Clarity AI</header>
 
         <div id="messages"></div>
 
         <div class="input-area">
             <input id="messageInput" placeholder="Ask Clarity…" />
-            <button onclick="sendMessage()">Send</button>
+            <button id="sendBtn">Send</button>
         </div>
     </div>
 
