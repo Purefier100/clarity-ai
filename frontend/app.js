@@ -105,8 +105,8 @@ async function sendMessage() {
                 Authorization: `Bearer ${token}`
             },
             body: JSON.stringify({
-                sessionId: "clarity", // ✅ REQUIRED
-                message: text         // ✅ REQUIRED (THIS FIXES THE ERROR)
+                sessionId: "clarity",
+                content: text  // ✅ Fixed: backend expects "content" not "message"
             })
         });
 
@@ -140,5 +140,4 @@ function addMessage(text, role, loading = false) {
     messages.scrollTop = messages.scrollHeight;
     return div;
 }
-
 
