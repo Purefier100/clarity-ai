@@ -106,7 +106,7 @@ async function sendMessage() {
             },
             body: JSON.stringify({
                 sessionId: "clarity",
-                content: text  // ✅ Fixed: backend expects "content" not "message"
+                message: text   // ✅ REQUIRED BY BACKEND
             })
         });
 
@@ -114,7 +114,7 @@ async function sendMessage() {
         loading.remove();
         isSending = false;
 
-        if (!res.ok || !data.reply) {
+        if (!res.ok) {
             console.error("Backend error:", data);
             addMessage("⚠️ AI temporarily unavailable.", "ai");
             return;
@@ -129,6 +129,7 @@ async function sendMessage() {
         addMessage("⚠️ Network error. Try again.", "ai");
     }
 }
+
 
 /* ---------- UI HELPERS ---------- */
 function addMessage(text, role, loading = false) {
