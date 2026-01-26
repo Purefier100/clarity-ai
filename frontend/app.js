@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("✅ DOM fully loaded");
+    console.log("✅ DOM loaded");
 
     const API = "https://ai-chat-api-a3wn.onrender.com";
 
@@ -7,20 +7,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const emailInput = document.getElementById("email");
     const passwordInput = document.getElementById("password");
 
-    if (!loginBtn || !emailInput || !passwordInput) {
-        console.error("❌ Login elements missing");
-        return;
-    }
+    const chat = document.getElementById("chat");
+    const sendBtn = document.getElementById("sendBtn");
+    const messageInput = document.getElementById("messageInput");
+    const messages = document.getElementById("messages");
 
-    loginBtn.addEventListener("click", async (e) => {
-        e.preventDefault();
-        console.log("🔥 LOGIN BUTTON CLICKED");
+    let token = localStorage.getItem("token");
+
+    /* ---------- LOGIN ---------- */
+    loginBtn.addEventListener("click", async () => {
+        console.log("🔥 LOGIN CLICKED");
 
         const email = emailInput.value.trim();
         const password = passwordInput.value.trim();
 
         if (!email || !password) {
-            alert("Email and password required");
+            alert("Email & password required");
             return;
         }
 
@@ -32,21 +34,52 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             const data = await res.json();
+            console.log("LOGIN RESPONSE:", data);
 
             if (!res.ok || !data.token) {
                 alert(data.error || "Login failed");
                 return;
             }
 
-            localStorage.setItem("token", data.token);
+            token = data.token;
+            localStorage.setItem("token", token);
 
-            // ✅ SUCCESS
-            document.getElementById("authOverlay").style.display = "none";
-            document.getElementById("chat").style.display = "flex";
+            alert("Login success 🎉");
+            chat.style.display = "block";
 
         } catch (err) {
-            console.error("FETCH FAILED:", err);
-            alert("Network error. Backend unreachable.");
+            console.error("FETCH ERROR:", err);
+            alert("Network error — check console");
+        }
+    });
+
+    /* ---------- CHAT ---------- */
+    sendBtn.addEventListener("click", async () => {
+        if (!token) return alert("Login first");
+
+        const text = messageInput.value.trim();
+        if (!text) return;
+
+        try {
+            const res = await fetch(`${API}/api/ai/chat`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    sessionId: "clarity",
+                    message: text
+                })
+            });
+
+            const data = await res.json();
+            messages.innerHTML += `<p>${data.reply || "AI error"}</p>`;
+            messageInput.value = "";
+
+        } catch (err) {
+            console.error(err);
+            alert("Chat error");
         }
     });
 });

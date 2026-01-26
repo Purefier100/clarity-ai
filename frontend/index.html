@@ -4,21 +4,25 @@
 <head>
     <meta charset="UTF-8" />
     <title>Clarity AI</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
 
 <body>
 
-    <div id="authOverlay">
-        <h2>Login</h2>
+    <h2>Login</h2>
 
-        <input id="email" placeholder="Email" />
-        <input id="password" type="password" placeholder="Password" />
+    <input id="email" placeholder="Email" />
+    <input id="password" type="password" placeholder="Password" />
+    <button id="loginBtn">LOGIN</button>
 
-        <button id="loginBtn">LOGIN</button>
+    <hr />
+
+    <div id="chat" style="display:none;">
+        <h2>Chat</h2>
+        <input id="messageInput" placeholder="Message" />
+        <button id="sendBtn">Send</button>
+        <div id="messages"></div>
     </div>
 
-    <!-- IMPORTANT: script MUST be last -->
     <script src="app.js"></script>
 </body>
 
