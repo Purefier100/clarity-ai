@@ -77,6 +77,9 @@ registerBtn.onclick = async () => {
 
 /* ---------- CHAT ---------- */
 sendBtn.onclick = sendMessage;
+messageInput.onkeypress = (e) => {
+    if (e.key === "Enter") sendMessage();
+};
 
 async function sendMessage() {
     if (!token) {
@@ -106,7 +109,7 @@ async function sendMessage() {
             },
             body: JSON.stringify({
                 sessionId: "clarity",
-                message: text   // ✅ ONLY THIS
+                message: text
             })
         });
 
@@ -140,4 +143,3 @@ function addMessage(text, role, loading = false) {
     messages.scrollTop = messages.scrollHeight;
     return div;
 }
-

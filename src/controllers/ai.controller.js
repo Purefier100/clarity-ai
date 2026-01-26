@@ -19,6 +19,7 @@ export const chat = async (req, res) => {
             message: message.trim()
         });
 
+        // Generate AI response
         const aiReply = await generateAIResponse(message);
 
         // Save AI reply
@@ -37,9 +38,8 @@ export const chat = async (req, res) => {
         console.error("AI CHAT ERROR:", err);
         return res.status(500).json({
             success: false,
-            error: err.message
+            error: err.message || "Something went wrong"
         });
     }
 };
-
 

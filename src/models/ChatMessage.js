@@ -2,16 +2,13 @@ import mongoose from "mongoose";
 
 const chatMessageSchema = new mongoose.Schema(
     {
-        sessionId: {
-            type: String,
-            required: true
-        },
+        sessionId: { type: String, required: true },
         role: {
             type: String,
             enum: ["user", "assistant"],
             required: true
         },
-        message: {            // ✅ ONLY message
+        message: {
             type: String,
             required: true
         }
@@ -20,4 +17,3 @@ const chatMessageSchema = new mongoose.Schema(
 );
 
 export default mongoose.model("ChatMessage", chatMessageSchema);
-
