@@ -1,21 +1,20 @@
-
-
 document.addEventListener("DOMContentLoaded", () => {
     console.log("✅ DOM fully loaded");
+
+    const API = "https://ai-chat-api-a3wn.onrender.com";
 
     const loginBtn = document.getElementById("loginBtn");
     const emailInput = document.getElementById("email");
     const passwordInput = document.getElementById("password");
 
-    console.log("loginBtn:", loginBtn);
-
-    if (!loginBtn) {
-        alert("❌ loginBtn NOT found — check HTML id");
+    if (!loginBtn || !emailInput || !passwordInput) {
+        console.error("❌ Login elements missing");
         return;
     }
 
     loginBtn.addEventListener("click", async (e) => {
         e.preventDefault();
+        console.log("🔥 LOGIN BUTTON CLICKED");
 
         const email = emailInput.value.trim();
         const password = passwordInput.value.trim();
@@ -26,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            const res = await fetch("https://ai-chat-api-a3wn.onrender.com/api/auth/login", {
+            const res = await fetch(`${API}/api/auth/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password })
@@ -41,14 +40,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
             localStorage.setItem("token", data.token);
 
-            // ✅ SUCCESS: hide login, show chat
+            // ✅ SUCCESS
             document.getElementById("authOverlay").style.display = "none";
             document.getElementById("chat").style.display = "flex";
 
         } catch (err) {
-            console.error(err);
-            alert("Network error");
+            console.error("FETCH FAILED:", err);
+            alert("Network error. Backend unreachable.");
         }
     });
-
 });
