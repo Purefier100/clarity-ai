@@ -22,7 +22,7 @@ export const chat = async (req, res) => {
         // Generate AI response
         const aiReply = await generateAIResponse(message);
 
-        // Save AI reply
+        // Save AI response
         await ChatMessage.create({
             sessionId,
             role: "assistant",
@@ -38,7 +38,7 @@ export const chat = async (req, res) => {
         console.error("AI CHAT ERROR:", err);
         return res.status(500).json({
             success: false,
-            error: err.message || "Something went wrong"
+            error: err.message
         });
     }
 };
