@@ -1,26 +1,20 @@
-// src/models/ChatMessage.js
 import mongoose from "mongoose";
 
 const chatMessageSchema = new mongoose.Schema(
     {
-        sessionId: {
-            type: String,
-            required: true,
-        },
+        sessionId: { type: String, required: true },
         role: {
             type: String,
             enum: ["user", "assistant"],
-            required: true,
+            required: true
         },
-        content: {
+        message: {   // ✅ USE message ONLY
             type: String,
-            required: true,
-        },
+            required: true
+        }
     },
     { timestamps: true }
 );
 
-const ChatMessage = mongoose.model("ChatMessage", chatMessageSchema);
-
-export default ChatMessage;
+export default mongoose.model("ChatMessage", chatMessageSchema);
 

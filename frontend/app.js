@@ -106,8 +106,7 @@ async function sendMessage() {
             },
             body: JSON.stringify({
                 sessionId: "clarity",
-                message: text,   // ✅ controller requirement
-                content: text    // ✅ mongoose requirement
+                message: text   // ✅ ONLY THIS
             })
         });
 
@@ -130,7 +129,6 @@ async function sendMessage() {
         addMessage("⚠️ Network error. Try again.", "ai");
     }
 }
-
 
 /* ---------- UI HELPERS ---------- */
 function addMessage(text, role, loading = false) {
