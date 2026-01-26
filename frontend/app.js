@@ -106,7 +106,8 @@ async function sendMessage() {
             },
             body: JSON.stringify({
                 sessionId: "clarity",
-                message: text   // ✅ REQUIRED BY BACKEND
+                message: text,   // ✅ controller requirement
+                content: text    // ✅ mongoose requirement
             })
         });
 
@@ -114,7 +115,7 @@ async function sendMessage() {
         loading.remove();
         isSending = false;
 
-        if (!res.ok) {
+        if (!res.ok || !data.reply) {
             console.error("Backend error:", data);
             addMessage("⚠️ AI temporarily unavailable.", "ai");
             return;
