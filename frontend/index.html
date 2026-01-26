@@ -16,28 +16,28 @@
             <h1 class="brand">Clarity AI</h1>
             <p class="tagline" id="authTitle">Login to continue</p>
 
-            <input id="email" placeholder="Email" />
+            <input id="email" type="email" placeholder="Email" />
             <input id="password" type="password" placeholder="Password" />
 
-            <button id="loginBtn">Login</button>
-            <button id="registerBtn" class="hidden">Create Account</button>
+            <button id="loginBtn" type="button">Login</button>
+            <button id="registerBtn" type="button" class="hidden">Create Account</button>
 
-            <p class="switch">
+            <div class="switch">
                 <span id="toggleText">Don’t have an account?</span>
-                <button id="toggleAuth">Register</button>
-            </p>
+                <button id="toggleAuth" type="button">Register</button>
+            </div>
         </div>
     </div>
 
     <!-- CHAT -->
-    <div id="chat">
+    <div id="chat" class="hidden">
         <header>Clarity AI</header>
 
         <div id="messages"></div>
 
         <div class="input-area">
             <input id="messageInput" placeholder="Ask Clarity…" />
-            <button id="sendBtn">Send</button>
+            <button id="sendBtn" type="button">Send</button>
         </div>
     </div>
 

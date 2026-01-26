@@ -2,154 +2,114 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const API = "https://ai-chat-api-a3wn.onrender.com";
 
-    /* ---------- STATE ---------- */
-    let token = localStorage.getItem("token") || null;
+    let token = localStorage.getItem("token");
     let isSending = false;
+    let isLogin = true;
 
-    /* ---------- ELEMENTS ---------- */
     const authOverlay = document.getElementById("authOverlay");
     const loginBtn = document.getElementById("loginBtn");
     const registerBtn = document.getElementById("registerBtn");
+    const toggleBtn = document.getElementById("toggleAuth");
+    const toggleText = document.getElementById("toggleText");
+    const authTitle = document.getElementById("authTitle");
+
     const emailInput = document.getElementById("email");
     const passwordInput = document.getElementById("password");
+
+    const chat = document.getElementById("chat");
     const sendBtn = document.getElementById("sendBtn");
     const messageInput = document.getElementById("messageInput");
     const messages = document.getElementById("messages");
 
-    if (!loginBtn || !emailInput || !passwordInput) {
-        console.error("Auth elements missing in HTML");
-        return;
-    }
+    /* ---------- TOGGLE LOGIN / REGISTER ---------- */
+    toggleBtn.onclick = () => {
+        isLogin = !isLogin;
 
-    /* ---------- AUTH ---------- */
-    loginBtn.addEventListener("click", async (e) => {
-        e.preventDefault(); // 🔥 IMPORTANT
+        loginBtn.classList.toggle("hidden", !isLogin);
+        registerBtn.classList.toggle("hidden", isLogin);
 
+        authTitle.textContent = isLogin ? "Login to continue" : "Create account";
+        toggleText.textContent = isLogin
+            ? "Don’t have an account?"
+            : "Already have an account?";
+        toggleBtn.textContent = isLogin ? "Register" : "Login";
+    };
+
+    /* ---------- LOGIN ---------- */
+    loginBtn.onclick = async () => {
         const email = emailInput.value.trim();
         const password = passwordInput.value.trim();
 
-        if (!email || !password) {
-            alert("Email and password required");
-            return;
-        }
+        if (!email || !password) return alert("Email and password required");
 
-        try {
-            const res = await fetch(`${API}/api/auth/login`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password })
-            });
+        const res = await fetch(`${API}/api/auth/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+        });
 
-            const data = await res.json();
+        const data = await res.json();
+        if (!res.ok) return alert(data.error || "Login failed");
 
-            if (!res.ok || !data.token) {
-                alert(data.error || "Login failed");
-                return;
-            }
-
-            token = data.token;
-            localStorage.setItem("token", token);
-
-            authOverlay.classList.add("hidden"); // hide login
-            document.getElementById("chat").classList.remove("hidden"); // show chat
-
-        } catch (err) {
-            console.error(err);
-            alert("Network error during login");
-        }
-    });
+        localStorage.setItem("token", data.token);
+        authOverlay.classList.add("hidden");
+        chat.classList.remove("hidden");
+    };
 
     /* ---------- REGISTER ---------- */
-    registerBtn?.addEventListener("click", async (e) => {
-        e.preventDefault();
-
+    registerBtn.onclick = async () => {
         const email = emailInput.value.trim();
         const password = passwordInput.value.trim();
 
-        if (!email || !password) {
-            alert("Email and password required");
-            return;
-        }
+        if (!email || !password) return alert("Email and password required");
 
-        try {
-            const res = await fetch(`${API}/api/auth/register`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password })
-            });
+        const res = await fetch(`${API}/api/auth/register`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+        });
 
-            if (!res.ok) {
-                alert("Registration failed");
-                return;
-            }
-
-            alert("Account created. Please login.");
-        } catch {
-            alert("Network error during registration");
-        }
-    });
+        if (!res.ok) return alert("Registration failed");
+        alert("Account created. Please login.");
+        toggleBtn.click();
+    };
 
     /* ---------- CHAT ---------- */
-    sendBtn?.addEventListener("click", sendMessage);
-
-    async function sendMessage() {
-        if (!token) {
-            addMessage("⚠️ Please login first.", "ai");
-            return;
-        }
+    sendBtn.onclick = async () => {
+        if (!token) return;
 
         if (isSending) return;
         isSending = true;
 
         const text = messageInput.value.trim();
-        if (!text) {
-            isSending = false;
-            return;
-        }
+        if (!text) return isSending = false;
 
         messageInput.value = "";
         addMessage(text, "user");
-        const loading = addMessage("Thinking…", "ai", true);
+        addMessage("Thinking…", "ai");
 
-        try {
-            const res = await fetch(`${API}/api/ai/chat`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    sessionId: "clarity",
-                    message: text
-                })
-            });
+        const res = await fetch(`${API}/api/ai/chat`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            },
+            body: JSON.stringify({ sessionId: "clarity", message: text })
+        });
 
-            const data = await res.json();
-            loading.remove();
-            isSending = false;
+        const data = await res.json();
+        isSending = false;
 
-            if (!res.ok || !data.reply) {
-                addMessage("⚠️ AI unavailable.", "ai");
-                return;
-            }
+        if (!res.ok) return addMessage("AI unavailable", "ai");
+        addMessage(data.reply, "ai");
+    };
 
-            addMessage(data.reply, "ai");
-
-        } catch (err) {
-            loading.remove();
-            isSending = false;
-            addMessage("⚠️ Network error.", "ai");
-        }
-    }
-
-    function addMessage(text, role, loading = false) {
+    function addMessage(text, role) {
         const div = document.createElement("div");
         div.className = `message ${role}`;
-        if (loading) div.classList.add("loading");
         div.textContent = text;
         messages.appendChild(div);
         messages.scrollTop = messages.scrollHeight;
-        return div;
     }
 
 });
