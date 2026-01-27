@@ -10,47 +10,90 @@ const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
 const messageInput = document.getElementById("messageInput");
 
+// Sidebar elements (safe if missing)
+const chatList = document.getElementById("chatList");
+const toggleSidebar = document.getElementById("toggleSidebar");
+const sidebar = document.getElementById("sidebar");
+
 // Create a unique session ID for this user
 let sessionId = `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-// Helper function to display messages
+/* ================= HELPERS ================= */
+
+// Display normal messages
 function addMessage(sender, text, isError = false) {
     const messageEl = document.createElement("p");
     messageEl.innerHTML = `<b>${sender}:</b> ${text}`;
-    if (isError) {
-        messageEl.style.color = "red";
-    }
+    if (isError) messageEl.style.color = "red";
     messagesDiv.appendChild(messageEl);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
 
-// Helper function to show loading indicator
-function showLoading(show) {
-    const sendBtn = document.getElementById("sendBtn");
-    if (show) {
-        sendBtn.disabled = true;
-        sendBtn.textContent = "Sending...";
-    } else {
-        sendBtn.disabled = false;
-        sendBtn.textContent = "Send";
-    }
+// AI streaming message (typing effect)
+function streamText(text) {
+    const p = document.createElement("p");
+    p.innerHTML = "<b>AI:</b> ";
+    messagesDiv.appendChild(p);
+
+    let i = 0;
+    const interval = setInterval(() => {
+        p.innerHTML += text[i] || "";
+        i++;
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        if (i >= text.length) clearInterval(interval);
+    }, 15);
 }
 
-// Register button handler
+// Button loading state
+function showLoading(show) {
+    const sendBtn = document.getElementById("sendBtn");
+    if (!sendBtn) return;
+
+    sendBtn.disabled = show;
+    sendBtn.textContent = show ? "Sending..." : "Send";
+}
+
+/* ================= CHAT HISTORY ================= */
+
+if (toggleSidebar && sidebar) {
+    toggleSidebar.onclick = () => {
+        sidebar.classList.toggle("open");
+    };
+}
+
+function saveChatPreview(text) {
+    const chats = JSON.parse(localStorage.getItem("chats") || "[]");
+    chats.unshift({
+        id: sessionId,
+        preview: text.slice(0, 30)
+    });
+    localStorage.setItem("chats", JSON.stringify(chats));
+    renderChats();
+}
+
+function renderChats() {
+    if (!chatList) return;
+    const chats = JSON.parse(localStorage.getItem("chats") || "[]");
+    chatList.innerHTML = "";
+
+    chats.forEach(chat => {
+        const div = document.createElement("div");
+        div.className = "chat-item";
+        div.textContent = chat.preview || "New chat";
+        div.onclick = () => location.reload(); // simple reset
+        chatList.appendChild(div);
+    });
+}
+
+/* ================= AUTH ================= */
+
+// Register
 document.getElementById("registerBtn").onclick = async () => {
     const email = emailInput.value.trim();
     const password = passwordInput.value;
 
-    // Validation
-    if (!email || !password) {
-        alert("Please enter both email and password");
-        return;
-    }
-
-    if (password.length < 6) {
-        alert("Password must be at least 6 characters long");
-        return;
-    }
+    if (!email || !password) return alert("Please enter both email and password");
+    if (password.length < 6) return alert("Password must be at least 6 characters long");
 
     try {
         const res = await fetch(`${API_BASE}/api/auth/register`, {
@@ -60,7 +103,6 @@ document.getElementById("registerBtn").onclick = async () => {
         });
 
         const data = await res.json();
-
         if (data.success) {
             alert("Registration successful! Please login.");
             emailInput.value = "";
@@ -68,22 +110,17 @@ document.getElementById("registerBtn").onclick = async () => {
         } else {
             alert(data.error || "Registration failed");
         }
-    } catch (error) {
-        console.error("Register error:", error);
+    } catch {
         alert("Network error. Please check your connection.");
     }
 };
 
-// Login button handler
+// Login
 document.getElementById("loginBtn").onclick = async () => {
     const email = emailInput.value.trim();
     const password = passwordInput.value;
 
-    // Validation
-    if (!email || !password) {
-        alert("Please enter both email and password");
-        return;
-    }
+    if (!email || !password) return alert("Please enter both email and password");
 
     try {
         const res = await fetch(`${API_BASE}/api/auth/login`, {
@@ -98,43 +135,32 @@ document.getElementById("loginBtn").onclick = async () => {
             localStorage.setItem("token", data.token);
             localStorage.setItem("userEmail", email);
 
-            // Switch to chat view
             authDiv.classList.add("hidden");
             chatDiv.classList.remove("hidden");
 
-            // Welcome message
             messagesDiv.innerHTML = "";
             addMessage("System", `Welcome back, ${email}! Start chatting with the AI.`);
-
-            // Focus on message input
             messageInput.focus();
         } else {
             alert(data.error || "Login failed");
         }
-    } catch (error) {
-        console.error("Login error:", error);
-        alert("Network error. Please check your connection and try again.");
+    } catch {
+        alert("Network error. Please try again.");
     }
 };
 
-// Send message button handler
+/* ================= CHAT ================= */
+
 document.getElementById("sendBtn").onclick = async () => {
     const token = localStorage.getItem("token");
     const message = messageInput.value.trim();
 
-    // Validation
-    if (!message) {
-        return;
-    }
-
-    if (!token) {
-        alert("Please login first");
-        return;
-    }
+    if (!message) return;
+    if (!token) return alert("Please login first");
 
     try {
-        // Show user message immediately
         addMessage("You", message);
+        saveChatPreview(message);
         messageInput.value = "";
         showLoading(true);
 
@@ -144,30 +170,17 @@ document.getElementById("sendBtn").onclick = async () => {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
             },
-            body: JSON.stringify({
-                sessionId: sessionId,
-                message: message
-            })
+            body: JSON.stringify({ sessionId, message })
         });
 
         const data = await res.json();
 
         if (data.success && data.reply) {
-            addMessage("AI", data.reply);
+            streamText(data.reply);
         } else {
-            // Handle error
             addMessage("System", data.error || "Failed to get response", true);
-
-            // If token expired, logout
-            if (res.status === 401) {
-                setTimeout(() => {
-                    logout();
-                    alert("Session expired. Please login again.");
-                }, 2000);
-            }
         }
-    } catch (error) {
-        console.error("Chat error:", error);
+    } catch {
         addMessage("System", "Network error. Please check your connection.", true);
     } finally {
         showLoading(false);
@@ -175,42 +188,41 @@ document.getElementById("sendBtn").onclick = async () => {
     }
 };
 
-// Allow Enter key to send message
-messageInput.addEventListener("keypress", (e) => {
+// Enter key
+messageInput.addEventListener("keypress", e => {
     if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
         document.getElementById("sendBtn").click();
     }
 });
 
-// Logout function
+/* ================= SESSION ================= */
+
 function logout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userEmail");
+    localStorage.clear();
     chatDiv.classList.add("hidden");
     authDiv.classList.remove("hidden");
     messagesDiv.innerHTML = "";
-    emailInput.value = "";
-    passwordInput.value = "";
 }
 
-// Check if user is already logged in
+// Auto login
 window.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem("token");
     const email = localStorage.getItem("userEmail");
 
     if (token) {
-        // Auto-login if token exists
         authDiv.classList.add("hidden");
         chatDiv.classList.remove("hidden");
-        messagesDiv.innerHTML = "";
         addMessage("System", `Welcome back, ${email || "User"}! Continue your conversation.`);
-        messageInput.focus();
+    } else {
+        addMessage("System", "Ask me anything to get started 👋");
     }
+
+    renderChats();
 });
 
-// Optional: Add logout button functionality if it exists
-const logoutBtn = document.getElementById("logoutBtn");
-if (logoutBtn) {
-    logoutBtn.onclick = logout;
-}
+// Loading screen cleanup
+window.onload = () => {
+    const loader = document.getElementById("loadingScreen");
+    if (loader) loader.style.display = "none";
+};

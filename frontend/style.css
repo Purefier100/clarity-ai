@@ -228,3 +228,83 @@ body {
         max-width: 90%;
     }
 }
+
+/* ================= SIDEBAR ================= */
+#sidebar {
+    width: 260px;
+    background: #020617;
+    border-right: 1px solid #1e293b;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Desktop layout */
+.container {
+    flex-direction: row;
+}
+
+#chat {
+    flex: 1;
+}
+
+/* Sidebar header */
+.sidebar-header {
+    padding: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #1e293b;
+}
+
+#chatList {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.chat-item {
+    padding: 12px 14px;
+    cursor: pointer;
+    border-bottom: 1px solid #1e293b;
+    font-size: 0.9rem;
+}
+
+.chat-item:hover {
+    background: rgba(56, 189, 248, 0.1);
+}
+
+/* ================= MOBILE ================= */
+@media (max-width: 768px) {
+    #sidebar {
+        position: fixed;
+        left: -100%;
+        top: 0;
+        height: 100vh;
+        z-index: 20;
+        transition: left 0.3s ease;
+    }
+
+    #sidebar.open {
+        left: 0;
+    }
+
+    #toggleSidebar {
+        position: absolute;
+        left: 12px;
+        top: 12px;
+        background: none;
+        border: none;
+        color: #e5e7eb;
+        font-size: 1.2rem;
+    }
+}
+
+#loadingScreen {
+    position: fixed;
+    inset: 0;
+    background: #020617;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #38bdf8;
+    z-index: 100;
+}

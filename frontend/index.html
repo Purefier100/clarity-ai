@@ -5,6 +5,12 @@
     <meta charset="UTF-8" />
     <title>AI Chat App</title>
     <link rel="stylesheet" href="style.css" />
+    <button id="toggleSidebar">☰</button>
+    <title>Clarity AI — Smart Chat Assistant</title>
+    <meta name="description" content="Clarity AI helps you chat, learn, and get answers instantly." />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
 </head>
 
 <body>
@@ -20,9 +26,15 @@
             <button id="loginBtn">Login</button>
         </div>
 
-        <div class="typing">
-            <span></span><span></span><span></span>
+        <div id="sidebar">
+            <div class="sidebar-header">
+                <h3>Chats</h3>
+                <button id="newChat">＋</button>
+            </div>
+            <div id="chatList"></div>
         </div>
+
+        <div id="loadingScreen">Loading AI…</div>
 
 
         <!-- CHAT -->
