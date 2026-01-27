@@ -1,52 +1,58 @@
+/* ---------- RESET ---------- */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: system-ui, sans-serif;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
+/* ---------- BODY ---------- */
 body {
     min-height: 100vh;
     background: radial-gradient(circle at top, #0f172a, #020617 70%);
     color: #e5e7eb;
-}
-
-/* ---------- AUTH OVERLAY ---------- */
-#authOverlay {
-    position: fixed;
-    inset: 0;
-    z-index: 1000;
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
 }
 
-.auth-card {
-    position: relative;
-    z-index: 1001;
-    background: rgba(15, 23, 42, 0.95);
-    padding: 32px;
+/* ---------- CONTAINER ---------- */
+.container {
     width: 100%;
-    max-width: 380px;
+    max-width: 900px;
+    height: 90vh;
+    background: rgba(2, 6, 23, 0.9);
+    border: 1px solid #1e293b;
     border-radius: 16px;
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    box-shadow: 0 30px 80px rgba(0, 0, 0, .6);
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
 }
 
-.brand {
+/* ---------- TITLE ---------- */
+.container h2 {
+    padding: 16px;
     text-align: center;
-    font-size: 2rem;
+    background: #020617;
+    border-bottom: 1px solid #1e293b;
+    font-size: 1.2rem;
+    font-weight: 600;
 }
 
-.tagline {
-    text-align: center;
-    color: #94a3b8;
-    font-size: .9rem;
+/* ---------- AUTH ---------- */
+#auth {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 32px;
+    justify-content: center;
+    max-width: 360px;
+    margin: 0 auto;
 }
 
-input {
+#auth input {
     padding: 14px;
     border-radius: 10px;
     border: 1px solid #1e293b;
@@ -54,83 +60,141 @@ input {
     color: #e5e7eb;
 }
 
-button {
+#auth input::placeholder {
+    color: #64748b;
+}
+
+#auth button {
     padding: 14px;
     border-radius: 10px;
     border: none;
     cursor: pointer;
     font-weight: 600;
-}
-
-#loginBtn,
-#registerBtn,
-#sendBtn {
     background: linear-gradient(135deg, #38bdf8, #0ea5e9);
     color: #020617;
+    transition: transform 0.15s ease, opacity 0.15s ease;
 }
 
-.switch {
-    display: flex;
-    justify-content: center;
-    gap: 6px;
-    font-size: .85rem;
-}
-
-.switch button {
-    background: none;
-    color: #38bdf8;
-    padding: 0;
+#auth button:hover {
+    transform: translateY(-1px);
+    opacity: 0.9;
 }
 
 /* ---------- CHAT ---------- */
 #chat {
-    height: 100vh;
+    flex: 1;
     display: flex;
     flex-direction: column;
 }
 
-header {
-    padding: 16px;
-    text-align: center;
-    background: #020617;
-    border-bottom: 1px solid #1e293b;
-}
-
+/* ---------- MESSAGES ---------- */
 #messages {
     flex: 1;
     padding: 16px;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
-.message {
-    margin-bottom: 12px;
-    padding: 12px;
+/* Generic message */
+#messages p {
+    padding: 12px 14px;
     border-radius: 12px;
-    max-width: 80%;
+    max-width: 75%;
+    line-height: 1.4;
+    word-wrap: break-word;
 }
 
-.message.user {
-    background: #38bdf8;
-    color: #020617;
-    margin-left: auto;
+/* User message */
+#messages p b:first-child:contains("You") {
+    display: none;
 }
 
-.message.ai {
+/* AI message */
+#messages p {
     background: #020617;
     border: 1px solid #1e293b;
 }
 
+/* User message override */
+#messages p:has(b:contains("You")) {
+    background: #38bdf8;
+    color: #020617;
+    margin-left: auto;
+    border: none;
+}
+
+/* System message */
+#messages p:has(b:contains("System")) {
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px dashed #38bdf8;
+    color: #bae6fd;
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* ---------- INPUT AREA ---------- */
 .input-area {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     padding: 12px;
     background: #020617;
+    border-top: 1px solid #1e293b;
 }
 
 .input-area input {
     flex: 1;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid #1e293b;
+    background: #020617;
+    color: #e5e7eb;
 }
 
+.input-area input::placeholder {
+    color: #64748b;
+}
+
+.input-area button {
+    padding: 14px 18px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+    color: #020617;
+    min-width: 90px;
+}
+
+.input-area button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ---------- SCROLLBAR ---------- */
+#messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+#messages::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 6px;
+}
+
+/* ---------- UTIL ---------- */
 .hidden {
     display: none;
+}
+
+/* ---------- MOBILE ---------- */
+@media (max-width: 600px) {
+    .container {
+        height: 100vh;
+        border-radius: 0;
+    }
+
+    #messages p {
+        max-width: 90%;
+    }
 }
