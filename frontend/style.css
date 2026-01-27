@@ -308,3 +308,77 @@ body {
     color: #38bdf8;
     z-index: 100;
 }
+
+/* ================= MOBILE CHAT FIX ================= */
+@media (max-width: 600px) {
+
+    body {
+        align-items: flex-start;
+    }
+
+    .container {
+        height: 100vh;
+        border-radius: 0;
+        max-width: 100%;
+    }
+
+    /* Header spacing */
+    .container h2 {
+        padding: 12px;
+        font-size: 1rem;
+    }
+
+    /* Messages container */
+    #messages {
+        padding: 12px;
+        gap: 10px;
+    }
+
+    /* Message bubbles – FULL WIDTH FEEL */
+    #messages p {
+        max-width: 100%;
+        width: fit-content;
+        padding: 12px 14px;
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    /* User messages */
+    #messages p:has(b:contains("You")) {
+        margin-left: auto;
+        border-radius: 14px 14px 4px 14px;
+    }
+
+    /* AI messages */
+    #messages p:has(b:contains("AI")) {
+        margin-right: auto;
+        border-radius: 14px 14px 14px 4px;
+    }
+
+    /* System messages */
+    #messages p:has(b:contains("System")) {
+        max-width: 90%;
+        font-size: 0.85rem;
+    }
+
+    /* Input stays visible */
+    .input-area {
+        padding: 10px;
+        gap: 8px;
+    }
+
+    .input-area input {
+        padding: 12px 14px;
+        font-size: 0.95rem;
+    }
+
+    .input-area button {
+        padding: 12px 16px;
+        font-size: 0.9rem;
+    }
+
+    /* Prevent content hiding behind keyboard */
+    #chat {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+}
