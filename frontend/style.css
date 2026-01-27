@@ -240,112 +240,77 @@ body {
     }
 }
 
-/* ================= PROFESSIONAL AUTH MODAL ================= */
+/* ================= AUTH CTA STYLE (SIGN UP / LOG IN) ================= */
 #auth {
     position: fixed;
     inset: 0;
-    background: radial-gradient(circle at top, #020617, #000 80%);
+    background: radial-gradient(circle at top, #020617, #000 85%);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
 }
 
-/* Auth card */
+/* Auth wrapper */
 #auth>* {
     width: 100%;
     max-width: 420px;
-    background: rgba(2, 6, 23, 0.92);
-    border: 1px solid #1e293b;
-    border-radius: 18px;
-    padding: 32px;
+    padding: 40px 28px;
     display: flex;
     flex-direction: column;
+    align-items: stretch;
     gap: 18px;
-    box-shadow:
-        0 30px 80px rgba(0, 0, 0, 0.75),
-        inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-/* Title */
-#auth h2,
-#auth h3 {
-    text-align: center;
-    font-size: 1.25rem;
-    font-weight: 600;
-    letter-spacing: 0.2px;
-    margin-bottom: 6px;
-}
-
-/* Subtitle (optional) */
-#auth p {
-    text-align: center;
-    font-size: 0.9rem;
-    color: #94a3b8;
-}
-
-/* Inputs */
+/* Hide inputs visually if you only want CTA buttons */
 #auth input {
-    width: 100%;
-    padding: 14px 16px;
-    border-radius: 12px;
-    border: 1px solid #1e293b;
-    background: #020617;
-    color: #e5e7eb;
-    font-size: 0.95rem;
-    transition: border 0.2s ease, box-shadow 0.2s ease;
+    display: none;
 }
 
-#auth input::placeholder {
-    color: #64748b;
-}
-
-#auth input:focus {
-    outline: none;
-    border-color: #38bdf8;
-    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.15);
-}
-
-/* Primary button */
-#auth button {
-    margin-top: 8px;
-    padding: 14px;
-    border-radius: 12px;
+/* Primary CTA — Sign Up */
+#auth button:first-of-type {
+    height: 64px;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #020617;
+    font-size: 1.05rem;
+    font-weight: 600;
     border: none;
     cursor: pointer;
-    font-weight: 600;
-    font-size: 0.95rem;
-    background: #38bdf8;
-    color: #020617;
     transition: transform 0.15s ease, opacity 0.15s ease;
 }
 
-#auth button:hover {
+#auth button:first-of-type:hover {
     transform: translateY(-1px);
     opacity: 0.95;
 }
 
-/* Secondary action (Register / Login switch) */
-#auth button.secondary {
+/* Secondary CTA — Log In */
+#auth button:last-of-type {
+    height: 64px;
+    border-radius: 999px;
     background: transparent;
-    color: #94a3b8;
-    border: 1px solid #1e293b;
+    color: #ffffff;
+    font-size: 1.05rem;
+    font-weight: 500;
+    border: 1.5px solid rgba(255, 255, 255, 0.35);
+    cursor: pointer;
+    transition: border 0.15s ease, opacity 0.15s ease;
 }
 
-#auth button.secondary:hover {
-    color: #e5e7eb;
-    border-color: #334155;
+#auth button:last-of-type:hover {
+    border-color: #ffffff;
+    opacity: 0.9;
 }
 
-/* Hide auth completely when logged in */
+/* Remove auth when logged in */
 #auth.hidden {
     display: none !important;
 }
 
-/* Mobile polish */
+/* Mobile spacing */
 @media (max-width: 480px) {
     #auth>* {
-        padding: 24px;
-        margin: 0 16px;
+        padding: 32px 20px;
     }
 }
