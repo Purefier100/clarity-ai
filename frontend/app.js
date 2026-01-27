@@ -1,216 +1,306 @@
-// app.js - Improved Frontend JavaScript
-
 const API_BASE = "https://ai-chat-api-a3wn.onrender.com";
 
-const authDiv = document.getElementById("auth");
-const chatDiv = document.getElementById("chat");
-const messagesDiv = document.getElementById("messages");
-
-const emailInput = document.getElementById("email");
-const passwordInput = document.getElementById("password");
-const messageInput = document.getElementById("messageInput");
-
-// Create a unique session ID for this user
+// State management
 let sessionId = `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+let isLoading = false;
 
-// Helper function to display messages
-function addMessage(sender, text, isError = false) {
-    const messageEl = document.createElement("p");
-    messageEl.innerHTML = `<b>${sender}:</b> ${text}`;
-    if (isError) {
-        messageEl.style.color = "red";
-    }
-    messagesDiv.appendChild(messageEl);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+// DOM elements
+const authSection = document.getElementById('authSection');
+const chatSection = document.getElementById('chatSection');
+const loginTab = document.getElementById('loginTab');
+const registerTab = document.getElementById('registerTab');
+const loginForm = document.getElementById('loginForm');
+const registerForm = document.getElementById('registerForm');
+const messagesContainer = document.getElementById('messagesContainer');
+const messageInput = document.getElementById('messageInput');
+const sendBtn = document.getElementById('sendBtn');
+const alertContainer = document.getElementById('alertContainer');
+
+// Tab switching
+loginTab.addEventListener('click', () => {
+    loginTab.classList.add('active');
+    registerTab.classList.remove('active');
+    loginForm.classList.remove('hidden');
+    registerForm.classList.add('hidden');
+    clearAlerts();
+});
+
+registerTab.addEventListener('click', () => {
+    registerTab.classList.add('active');
+    loginTab.classList.remove('active');
+    registerForm.classList.remove('hidden');
+    loginForm.classList.add('hidden');
+    clearAlerts();
+});
+
+// Alert functions
+function showAlert(message, type = 'error') {
+    clearAlerts();
+    const alert = document.createElement('div');
+    alert.className = `alert alert-${type}`;
+    alert.textContent = message;
+    alertContainer.appendChild(alert);
+    setTimeout(() => alert.remove(), 5000);
 }
 
-// Helper function to show loading indicator
-function showLoading(show) {
-    const sendBtn = document.getElementById("sendBtn");
-    if (show) {
-        sendBtn.disabled = true;
-        sendBtn.textContent = "Sending...";
-    } else {
-        sendBtn.disabled = false;
-        sendBtn.textContent = "Send";
-    }
+function clearAlerts() {
+    alertContainer.innerHTML = '';
 }
 
-// Register button handler
-document.getElementById("registerBtn").onclick = async () => {
-    const email = emailInput.value.trim();
-    const password = passwordInput.value;
+// Registration
+document.getElementById('registerBtn').addEventListener('click', async () => {
+    const email = document.getElementById('registerEmail').value.trim();
+    const password = document.getElementById('registerPassword').value;
 
-    // Validation
     if (!email || !password) {
-        alert("Please enter both email and password");
+        showAlert('Please fill in all fields');
         return;
     }
 
     if (password.length < 6) {
-        alert("Password must be at least 6 characters long");
+        showAlert('Password must be at least 6 characters');
         return;
     }
 
     try {
         const res = await fetch(`${API_BASE}/api/auth/register`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
         });
 
         const data = await res.json();
 
         if (data.success) {
-            alert("Registration successful! Please login.");
-            emailInput.value = "";
-            passwordInput.value = "";
+            showAlert('Account created! Please login.', 'success');
+            setTimeout(() => {
+                loginTab.click();
+                document.getElementById('loginEmail').value = email;
+            }, 1500);
         } else {
-            alert(data.error || "Registration failed");
+            showAlert(data.error || 'Registration failed');
         }
     } catch (error) {
-        console.error("Register error:", error);
-        alert("Network error. Please check your connection.");
+        showAlert('Network error. Please try again.');
     }
-};
+});
 
-// Login button handler
-document.getElementById("loginBtn").onclick = async () => {
-    const email = emailInput.value.trim();
-    const password = passwordInput.value;
+// Login
+document.getElementById('loginBtn').addEventListener('click', async () => {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
 
-    // Validation
     if (!email || !password) {
-        alert("Please enter both email and password");
+        showAlert('Please fill in all fields');
         return;
     }
 
     try {
         const res = await fetch(`${API_BASE}/api/auth/login`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
         });
 
         const data = await res.json();
 
         if (data.success && data.token) {
-            localStorage.setItem("token", data.token);
-            localStorage.setItem("userEmail", email);
-
-            // Switch to chat view
-            authDiv.classList.add("hidden");
-            chatDiv.classList.remove("hidden");
-
-            // Welcome message
-            messagesDiv.innerHTML = "";
-            addMessage("System", `Welcome back, ${email}! Start chatting with the AI.`);
-
-            // Focus on message input
-            messageInput.focus();
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('userEmail', email);
+            switchToChat();
         } else {
-            alert(data.error || "Login failed");
+            showAlert(data.error || 'Login failed');
         }
     } catch (error) {
-        console.error("Login error:", error);
-        alert("Network error. Please check your connection and try again.");
+        showAlert('Network error. Please try again.');
     }
-};
+});
 
-// Send message button handler
-document.getElementById("sendBtn").onclick = async () => {
-    const token = localStorage.getItem("token");
-    const message = messageInput.value.trim();
+// Switch to chat view
+function switchToChat() {
+    authSection.classList.remove('active');
+    chatSection.classList.add('active');
+    messageInput.focus();
 
-    // Validation
-    if (!message) {
-        return;
+    // Add welcome message
+    const email = localStorage.getItem('userEmail');
+    addSystemMessage(`Welcome back, ${email}! 👋`);
+}
+
+// Add message to chat
+function addMessage(text, type = 'user') {
+    const emptyState = messagesContainer.querySelector('.empty-state');
+    if (emptyState) {
+        emptyState.remove();
     }
 
+    const message = document.createElement('div');
+    message.className = `message ${type}`;
+
+    const time = new Date().toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+
+    if (type === 'system') {
+        message.innerHTML = `
+            <div class="message-content">
+                <div class="message-text">${text}</div>
+            </div>
+        `;
+    } else {
+        const avatar = type === 'user' ? '👤' : '🤖';
+        const sender = type === 'user' ? 'You' : 'Nexus AI';
+
+        message.innerHTML = `
+            <div class="message-avatar ${type}-avatar">${avatar}</div>
+            <div class="message-content">
+                <div class="message-header">
+                    <span class="message-sender">${sender}</span>
+                    <span class="message-time">${time}</span>
+                </div>
+                <div class="message-text">${text}</div>
+            </div>
+        `;
+    }
+
+    messagesContainer.appendChild(message);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+function addSystemMessage(text) {
+    addMessage(text, 'system');
+}
+
+function addTypingIndicator() {
+    const indicator = document.createElement('div');
+    indicator.className = 'message ai';
+    indicator.id = 'typingIndicator';
+    indicator.innerHTML = `
+        <div class="message-avatar ai-avatar-small">🤖</div>
+        <div class="message-content">
+            <div class="typing-indicator active">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
+        </div>
+    `;
+    messagesContainer.appendChild(indicator);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+function removeTypingIndicator() {
+    const indicator = document.getElementById('typingIndicator');
+    if (indicator) {
+        indicator.remove();
+    }
+}
+
+// Send message
+async function sendMessage() {
+    const text = messageInput.value.trim();
+    if (!text || isLoading) return;
+
+    const token = localStorage.getItem('token');
     if (!token) {
-        alert("Please login first");
+        logout();
         return;
     }
+
+    isLoading = true;
+    sendBtn.disabled = true;
+
+    addMessage(text, 'user');
+    messageInput.value = '';
+    messageInput.style.height = 'auto';
+
+    addTypingIndicator();
 
     try {
-        // Show user message immediately
-        addMessage("You", message);
-        messageInput.value = "";
-        showLoading(true);
-
         const res = await fetch(`${API_BASE}/api/ai/chat`, {
-            method: "POST",
+            method: 'POST',
             headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({
-                sessionId: sessionId,
-                message: message
-            })
+            body: JSON.stringify({ sessionId, message: text })
         });
 
         const data = await res.json();
+        removeTypingIndicator();
 
         if (data.success && data.reply) {
-            addMessage("AI", data.reply);
+            addMessage(data.reply, 'ai');
         } else {
-            // Handle error
-            addMessage("System", data.error || "Failed to get response", true);
+            addMessage(data.error || 'Failed to get response', 'error');
 
-            // If token expired, logout
             if (res.status === 401) {
                 setTimeout(() => {
                     logout();
-                    alert("Session expired. Please login again.");
+                    showAlert('Session expired. Please login again.');
                 }, 2000);
             }
         }
     } catch (error) {
-        console.error("Chat error:", error);
-        addMessage("System", "Network error. Please check your connection.", true);
+        removeTypingIndicator();
+        addMessage('Network error. Please check your connection.', 'error');
     } finally {
-        showLoading(false);
+        isLoading = false;
+        sendBtn.disabled = false;
         messageInput.focus();
     }
-};
+}
 
-// Allow Enter key to send message
-messageInput.addEventListener("keypress", (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+sendBtn.addEventListener('click', sendMessage);
+
+// Enter to send (Shift+Enter for new line)
+messageInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
-        document.getElementById("sendBtn").click();
+        sendMessage();
     }
 });
 
-// Logout function
+// Auto-resize textarea
+messageInput.addEventListener('input', function () {
+    this.style.height = 'auto';
+    this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+});
+
+// Logout
+document.getElementById('logoutBtn').addEventListener('click', logout);
+
 function logout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userEmail");
-    chatDiv.classList.add("hidden");
-    authDiv.classList.remove("hidden");
-    messagesDiv.innerHTML = "";
-    emailInput.value = "";
-    passwordInput.value = "";
+    localStorage.removeItem('token');
+    localStorage.removeItem('userEmail');
+    chatSection.classList.remove('active');
+    authSection.classList.add('active');
+    messagesContainer.innerHTML = `
+        <div class="empty-state">
+            <div class="empty-state-icon">💬</div>
+            <p>Start a conversation with Nexus AI.<br>Ask me anything!</p>
+        </div>
+    `;
+    document.getElementById('loginEmail').value = '';
+    document.getElementById('loginPassword').value = '';
+    document.getElementById('registerEmail').value = '';
+    document.getElementById('registerPassword').value = '';
 }
 
-// Check if user is already logged in
-window.addEventListener("DOMContentLoaded", () => {
-    const token = localStorage.getItem("token");
-    const email = localStorage.getItem("userEmail");
-
+// Check for existing session on load
+window.addEventListener('DOMContentLoaded', () => {
+    const token = localStorage.getItem('token');
     if (token) {
-        // Auto-login if token exists
-        authDiv.classList.add("hidden");
-        chatDiv.classList.remove("hidden");
-        messagesDiv.innerHTML = "";
-        addMessage("System", `Welcome back, ${email || "User"}! Continue your conversation.`);
-        messageInput.focus();
+        switchToChat();
     }
 });
 
-// Optional: Add logout button functionality if it exists
-const logoutBtn = document.getElementById("logoutBtn");
-if (logoutBtn) {
-    logoutBtn.onclick = logout;
-}
+// Enter key on login forms
+document.getElementById('loginPassword').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') document.getElementById('loginBtn').click();
+});
+
+document.getElementById('registerPassword').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') document.getElementById('registerBtn').click();
+});
