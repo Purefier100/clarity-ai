@@ -3,26 +3,35 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>Clarity AI</title>
+    <title>AI Chat App</title>
+    <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
+    <div class="container">
+        <h2>AI Chat</h2>
 
-    <h2>Login</h2>
+        <!-- AUTH -->
+        <div id="auth">
+            <input id="email" type="email" placeholder="Email" />
+            <input id="password" type="password" placeholder="Password" />
 
-    <input id="email" placeholder="Email" />
-    <input id="password" type="password" placeholder="Password" />
-    <button id="loginBtn">LOGIN</button>
+            <button id="registerBtn">Register</button>
+            <button id="loginBtn">Login</button>
+        </div>
 
-    <hr />
+        <!-- CHAT -->
+        <div id="chat" class="hidden">
+            <div id="messages"></div>
 
-    <div id="chat" style="display:none;">
-        <h2>Chat</h2>
-        <input id="messageInput" placeholder="Message" />
-        <button id="sendBtn">Send</button>
-        <div id="messages"></div>
+            <div class="input-area">
+                <input id="messageInput" placeholder="Type a message..." />
+                <button id="sendBtn">Send</button>
+            </div>
+        </div>
     </div>
 
+    <!-- IMPORTANT: JS must load AFTER HTML -->
     <script src="app.js"></script>
 </body>
 
