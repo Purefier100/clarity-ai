@@ -426,3 +426,40 @@ body {
         padding: 10px;
     }
 }
+
+/* ================= MOBILE SAFE HEADER ================= */
+@media (max-width: 600px) {
+    .container h2 {
+        padding-top: calc(12px + env(safe-area-inset-top));
+        padding-bottom: 12px;
+    }
+}
+
+/* ================= DESKTOP CHAT SPACING ================= */
+@media (min-width: 1024px) {
+
+    /* Add breathing room around chat */
+    #chat {
+        padding: 24px;
+    }
+
+    /* Messages card feel */
+    #messages {
+        background: rgba(2, 6, 23, 0.6);
+        border: 1px solid #1e293b;
+        border-radius: 16px;
+        padding: 20px;
+    }
+
+    /* Input spacing from messages */
+    .input-area {
+        margin-top: 16px;
+        border-radius: 16px;
+    }
+}
+
+@media (min-width: 1024px) {
+    #sidebar {
+        margin-right: 16px;
+    }
+}
