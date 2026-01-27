@@ -46,6 +46,21 @@ async function sendMessage() {
     }
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+    const getStartedBtn = document.getElementById("getStartedBtn");
+
+    if (getStartedBtn) {
+        getStartedBtn.addEventListener("click", showAuth);
+    }
+});
+
+
+function showAuth() {
+    document.getElementById("landing")?.classList.add("hidden");
+    document.getElementById("auth")?.classList.remove("hidden");
+}
+
+
 /* ---------- UI ---------- */
 function addMessage(role, text, loading = false) {
     const messages = document.getElementById("messages");
