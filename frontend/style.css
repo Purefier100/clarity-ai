@@ -240,38 +240,48 @@ body {
     }
 }
 
-/* ================= AUTH MODAL FIX ================= */
+/* ================= PROFESSIONAL AUTH MODAL ================= */
 #auth {
     position: fixed;
     inset: 0;
-    background: rgba(2, 6, 23, 0.92);
-    backdrop-filter: blur(6px);
+    background: radial-gradient(circle at top, #020617, #000 80%);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 999;
+    z-index: 1000;
 }
 
 /* Auth card */
 #auth>* {
-    background: #020617;
-    border: 1px solid #1e293b;
-    border-radius: 16px;
-    padding: 28px;
     width: 100%;
-    max-width: 360px;
+    max-width: 420px;
+    background: rgba(2, 6, 23, 0.92);
+    border: 1px solid #1e293b;
+    border-radius: 18px;
+    padding: 32px;
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    gap: 18px;
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.75),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-/* Auth title (optional h2 / h3) */
+/* Title */
 #auth h2,
 #auth h3 {
     text-align: center;
-    font-size: 1.2rem;
-    margin-bottom: 8px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    margin-bottom: 6px;
+}
+
+/* Subtitle (optional) */
+#auth p {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #94a3b8;
 }
 
 /* Inputs */
@@ -283,29 +293,59 @@ body {
     background: #020617;
     color: #e5e7eb;
     font-size: 0.95rem;
+    transition: border 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Buttons row */
+#auth input::placeholder {
+    color: #64748b;
+}
+
+#auth input:focus {
+    outline: none;
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.15);
+}
+
+/* Primary button */
 #auth button {
+    margin-top: 8px;
     padding: 14px;
     border-radius: 12px;
     border: none;
     cursor: pointer;
     font-weight: 600;
-    background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+    font-size: 0.95rem;
+    background: #38bdf8;
     color: #020617;
+    transition: transform 0.15s ease, opacity 0.15s ease;
 }
 
-/* Secondary buttons (register/login switch) */
+#auth button:hover {
+    transform: translateY(-1px);
+    opacity: 0.95;
+}
+
+/* Secondary action (Register / Login switch) */
 #auth button.secondary {
     background: transparent;
-    color: #38bdf8;
+    color: #94a3b8;
     border: 1px solid #1e293b;
 }
 
-/* Mobile spacing */
+#auth button.secondary:hover {
+    color: #e5e7eb;
+    border-color: #334155;
+}
+
+/* Hide auth completely when logged in */
+#auth.hidden {
+    display: none !important;
+}
+
+/* Mobile polish */
 @media (max-width: 480px) {
     #auth>* {
+        padding: 24px;
         margin: 0 16px;
     }
 }
