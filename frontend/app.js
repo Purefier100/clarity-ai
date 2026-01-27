@@ -44,6 +44,21 @@ document.getElementById("loginBtn")?.addEventListener("click", async () => {
     }
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+    const getStartedBtn = document.getElementById("getStartedBtn");
+
+    if (getStartedBtn) {
+        getStartedBtn.addEventListener("click", showAuth);
+    }
+});
+
+
+function showAuth() {
+    document.getElementById("landing")?.classList.add("hidden");
+    document.getElementById("auth")?.classList.remove("hidden");
+}
+
+
 /* ---------- CHAT ---------- */
 document.getElementById("sendBtn")?.addEventListener("click", sendMessage);
 
