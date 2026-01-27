@@ -3,43 +3,42 @@ import { generateAIResponse } from "../services/ai.service.js";
 
 export const chat = async (req, res) => {
     try {
-        const { sessionId, message } = req.body;
+        const { sessionId, content } = req.body;
 
-        if (!sessionId || !message || !message.trim()) {
+        if (!sessionId || !content || !content.trim()) {
             return res.status(400).json({
                 success: false,
-                error: "sessionId and message are required"
+                error: "sessionId and content are required",
             });
         }
 
-        // Save user message
+        // ✅ Save USER message
         await ChatMessage.create({
             sessionId,
             role: "user",
-            message: message.trim()
+            content: content.trim(),
         });
 
-        // Generate AI response
-        const aiReply = await generateAIResponse(message);
+        // ✅ Generate AI reply
+        const aiReply = await generateAIResponse(content.trim());
 
-        // Save AI response
+        // ✅ Save AI reply
         await ChatMessage.create({
             sessionId,
             role: "assistant",
-            message: aiReply
+            content: aiReply,
         });
 
         return res.json({
             success: true,
-            reply: aiReply
+            reply: aiReply,
         });
 
     } catch (err) {
         console.error("AI CHAT ERROR:", err);
         return res.status(500).json({
             success: false,
-            error: err.message
+            error: err.message,
         });
     }
 };
-

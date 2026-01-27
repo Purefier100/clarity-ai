@@ -4,20 +4,19 @@ const chatMessageSchema = new mongoose.Schema(
     {
         sessionId: {
             type: String,
-            required: true
+            required: true,
         },
         role: {
             type: String,
             enum: ["user", "assistant"],
-            required: true
+            required: true,
         },
-        message: {
+        content: {
             type: String,
-            required: true
-        }
+            required: true,
+        },
     },
     { timestamps: true }
 );
 
 export default mongoose.model("ChatMessage", chatMessageSchema);
-
