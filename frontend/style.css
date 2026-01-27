@@ -1,4 +1,4 @@
-/* ---------- RESET ---------- */
+/* ================= RESET ================= */
 * {
     margin: 0;
     padding: 0;
@@ -6,7 +6,7 @@
     font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* ---------- BODY ---------- */
+/* ================= BODY ================= */
 body {
     min-height: 100vh;
     background: radial-gradient(circle at top, #0f172a, #020617 70%);
@@ -16,40 +16,50 @@ body {
     align-items: center;
 }
 
-/* ---------- CONTAINER ---------- */
+/* ================= CONTAINER ================= */
 .container {
     width: 100%;
     max-width: 900px;
-    height: 90vh;
-    background: rgba(2, 6, 23, 0.9);
+    height: 92vh;
+    background: rgba(2, 6, 23, 0.95);
     border: 1px solid #1e293b;
     border-radius: 16px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.65);
+    position: relative;
 }
 
-/* ---------- TITLE ---------- */
+/* ================= HEADER ================= */
 .container h2 {
-    padding: 16px;
+    padding: 14px;
     text-align: center;
     background: #020617;
     border-bottom: 1px solid #1e293b;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 600;
 }
 
-/* ---------- AUTH ---------- */
+/* ================= AUTH (LOGIN FIRST) ================= */
 #auth {
-    flex: 1;
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    background: rgba(2, 6, 23, 0.96);
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    padding: 32px;
     justify-content: center;
+    gap: 14px;
+    padding: 32px;
     max-width: 360px;
-    margin: 0 auto;
+    margin: auto;
+    border-radius: 14px;
+}
+
+/* Hide auth after login */
+#auth.hidden {
+    display: none;
 }
 
 #auth input {
@@ -72,52 +82,50 @@ body {
     font-weight: 600;
     background: linear-gradient(135deg, #38bdf8, #0ea5e9);
     color: #020617;
-    transition: transform 0.15s ease, opacity 0.15s ease;
 }
 
-#auth button:hover {
-    transform: translateY(-1px);
-    opacity: 0.9;
-}
-
-/* ---------- CHAT ---------- */
+/* ================= CHAT ================= */
 #chat {
     flex: 1;
     display: flex;
     flex-direction: column;
+    opacity: 1;
 }
 
-/* ---------- MESSAGES ---------- */
+/* Hide chat when auth is visible */
+#chat.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* ================= MESSAGES ================= */
 #messages {
     flex: 1;
-    padding: 16px;
+    padding: 20px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 14px;
 }
 
-/* Generic message */
+/* Message base */
 #messages p {
-    padding: 12px 14px;
-    border-radius: 12px;
     max-width: 75%;
-    line-height: 1.4;
+    padding: 14px 16px;
+    border-radius: 14px;
+    line-height: 1.45;
+    font-size: 0.95rem;
     word-wrap: break-word;
 }
 
-/* User message */
-#messages p b:first-child:contains("You") {
-    display: none;
-}
-
-/* AI message */
+/* AI messages (Claude / ChatGPT style) */
 #messages p {
     background: #020617;
     border: 1px solid #1e293b;
+    color: #e5e7eb;
 }
 
-/* User message override */
+/* User messages */
 #messages p:has(b:contains("You")) {
     background: #38bdf8;
     color: #020617;
@@ -125,28 +133,28 @@ body {
     border: none;
 }
 
-/* System message */
+/* System messages */
 #messages p:has(b:contains("System")) {
-    background: rgba(56, 189, 248, 0.1);
-    border: 1px dashed #38bdf8;
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid #38bdf8;
     color: #bae6fd;
     margin: 0 auto;
     text-align: center;
 }
 
-/* ---------- INPUT AREA ---------- */
+/* ================= INPUT AREA ================= */
 .input-area {
     display: flex;
     gap: 10px;
-    padding: 12px;
+    padding: 14px;
     background: #020617;
     border-top: 1px solid #1e293b;
 }
 
 .input-area input {
     flex: 1;
-    padding: 14px;
-    border-radius: 12px;
+    padding: 14px 16px;
+    border-radius: 14px;
     border: 1px solid #1e293b;
     background: #020617;
     color: #e5e7eb;
@@ -157,14 +165,13 @@ body {
 }
 
 .input-area button {
-    padding: 14px 18px;
-    border-radius: 12px;
+    padding: 14px 20px;
+    border-radius: 14px;
     border: none;
     cursor: pointer;
     font-weight: 600;
     background: linear-gradient(135deg, #38bdf8, #0ea5e9);
     color: #020617;
-    min-width: 90px;
 }
 
 .input-area button:disabled {
@@ -172,7 +179,7 @@ body {
     cursor: not-allowed;
 }
 
-/* ---------- SCROLLBAR ---------- */
+/* ================= SCROLLBAR ================= */
 #messages::-webkit-scrollbar {
     width: 6px;
 }
@@ -182,12 +189,7 @@ body {
     border-radius: 6px;
 }
 
-/* ---------- UTIL ---------- */
-.hidden {
-    display: none;
-}
-
-/* ---------- MOBILE ---------- */
+/* ================= MOBILE ================= */
 @media (max-width: 600px) {
     .container {
         height: 100vh;
