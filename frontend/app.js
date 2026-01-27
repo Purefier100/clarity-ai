@@ -1,49 +1,15 @@
 const API = "https://ai-chat-api-a3wn.onrender.com";
 
-/* ---------- TOKEN ---------- */
+/* ---------- STATE ---------- */
 let token = localStorage.getItem("token") || "";
 
-/* ---------- SIMPLE MEMORY ---------- */
+/* ---------- MEMORY ---------- */
 let memory = {
     name: localStorage.getItem("userName") || null,
     history: []
 };
 
-/* ---------- PAGE SWITCH ---------- */
-function showAuth() {
-    document.getElementById("landing")?.classList.add("hidden");
-    document.getElementById("auth")?.classList.remove("hidden");
-}
-
-function showChat() {
-    document.getElementById("auth")?.classList.add("hidden");
-    document.getElementById("chat")?.classList.remove("hidden");
-}
-
 /* ---------- AUTH ---------- */
-document.getElementById("registerBtn")?.addEventListener("click", async () => {
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
-
-    if (!email || !password) {
-        alert("Email and password required");
-        return;
-    }
-
-    const res = await fetch(`${API}/api/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-    });
-
-    if (!res.ok) {
-        alert("Registration failed");
-        return;
-    }
-
-    alert("Account created. Please login.");
-});
-
 document.getElementById("loginBtn")?.addEventListener("click", async () => {
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
@@ -53,26 +19,34 @@ document.getElementById("loginBtn")?.addEventListener("click", async () => {
         return;
     }
 
-    const res = await fetch(`${API}/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-    });
+    try {
+        const res = await fetch(`${API}/api/auth/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+        });
 
-    const data = await res.json();
+        const data = await res.json();
 
-    if (!res.ok || !data.token) {
-        alert(data.error || "Login failed");
-        return;
+        if (!res.ok || !data.token) {
+            alert(data.error || "Login failed");
+            return;
+        }
+
+        token = data.token;
+        localStorage.setItem("token", token);
+
+        document.getElementById("auth").classList.add("hidden");
+        document.getElementById("chat").classList.remove("hidden");
+
+    } catch (err) {
+        alert("Network error");
     }
-
-    token = data.token;
-    localStorage.setItem("token", token);
-
-    showChat();
 });
 
 /* ---------- CHAT ---------- */
+document.getElementById("sendBtn")?.addEventListener("click", sendMessage);
+
 async function sendMessage() {
     if (!token) {
         addMessage("ai", "⚠️ Please login first.");
@@ -93,15 +67,26 @@ async function sendMessage() {
         localStorage.setItem("userName", memory.name);
     }
 
-    const loading = addMessage("ai", "Thinking…", true);
+    /* ---- Save history BEFORE request ---- */
+    memory.history.push(`User: ${text}`);
 
-    /* ---- Build context ---- */
+    /* ---- Build strong AI prompt ---- */
     const context = `
-User name: ${memory.name || "unknown"}
-Conversation history:
+You are a helpful AI assistant.
+
+Known user information:
+- Name: ${memory.name || "unknown"}
+
+Conversation so far:
 ${memory.history.join("\n")}
-User says: ${text}
+
+User just said:
+"${text}"
+
+If the user asks about their name, answer using the known name.
 `;
+
+    const loading = addMessage("ai", "Thinking…", true);
 
     try {
         const res = await fetch(`${API}/api/ai/chat`, {
@@ -111,7 +96,7 @@ User says: ${text}
                 Authorization: `Bearer ${token}`
             },
             body: JSON.stringify({
-                sessionId: "clarity-session", // ✅ FIXED session
+                sessionId: "clarity-session",
                 message: context
             })
         });
@@ -120,14 +105,13 @@ User says: ${text}
         loading.remove();
 
         if (!res.ok || !data.reply) {
-            addMessage("ai", "⚠️ AI unavailable. Try again.");
+            addMessage("ai", "⚠️ AI unavailable.");
             return;
         }
 
-        memory.history.push(`User: ${text}`);
         memory.history.push(`AI: ${data.reply}`);
-
         typeMessage("ai", data.reply);
+
     } catch (err) {
         loading.remove();
         addMessage("ai", "⚠️ Network error.");
@@ -140,17 +124,15 @@ function addMessage(role, text, loading = false) {
 
     const msg = document.createElement("div");
     msg.className = `message ${role}`;
+    if (loading) msg.classList.add("loading");
 
     msg.innerHTML = `
-    <div class="avatar">${role === "ai" ? "🤖" : "🧑"}</div>
-    <div class="bubble">${text}</div>
-  `;
-
-    if (loading) msg.classList.add("loading");
+        <div class="avatar">${role === "ai" ? "🤖" : "🧑"}</div>
+        <div class="bubble">${text}</div>
+    `;
 
     messages.appendChild(msg);
     messages.scrollTop = messages.scrollHeight;
-
     return msg;
 }
 
@@ -165,4 +147,3 @@ function typeMessage(role, text) {
         if (i >= text.length) clearInterval(interval);
     }, 20);
 }
-
