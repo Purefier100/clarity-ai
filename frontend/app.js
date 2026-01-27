@@ -1,77 +1,66 @@
-const API = "https://ai-chat-api-a3wn.onrender.com";
-let token = localStorage.getItem("token") || "";
+const API_BASE = "https://ai-chat-api-a3wn.onrender.com";
 
-/* ---------- CHAT ---------- */
-async function sendMessage() {
-    if (!token) {
-        addMessage("ai", "⚠️ Please login first.");
-        return;
+const authDiv = document.getElementById("auth");
+const chatDiv = document.getElementById("chat");
+const messagesDiv = document.getElementById("messages");
+
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const messageInput = document.getElementById("messageInput");
+
+document.getElementById("registerBtn").onclick = async () => {
+    const email = emailInput.value;
+    const password = passwordInput.value;
+
+    const res = await fetch(`${API_BASE}/api/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+    });
+
+    const data = await res.json();
+    alert(data.message || "Registered");
+};
+
+document.getElementById("loginBtn").onclick = async () => {
+    const email = emailInput.value;
+    const password = passwordInput.value;
+
+    const res = await fetch(`${API_BASE}/api/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+    });
+
+    const data = await res.json();
+
+    if (data.token) {
+        localStorage.setItem("token", data.token);
+        authDiv.classList.add("hidden");
+        chatDiv.classList.remove("hidden");
+    } else {
+        alert("Login failed");
     }
+};
 
-    const input = document.getElementById("messageInput");
-    const text = input.value.trim();
-    if (!text) return;
+document.getElementById("sendBtn").onclick = async () => {
+    const token = localStorage.getItem("token");
+    const message = messageInput.value;
 
-    input.value = "";
-    addMessage("user", text);
+    const res = await fetch(`${API_BASE}/api/ai/chat`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+            sessionId: "frontend-user",
+            message
+        })
+    });
 
-    const loading = addMessage("ai", "Thinking…", true);
-
-    try {
-        const res = await fetch(`${API}/api/ai/chat`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                sessionId: "clarity-session",
-                content: text   // ✅ THIS MUST MATCH SCHEMA
-            })
-        });
-
-        const data = await res.json();
-        loading.remove();
-
-        if (!res.ok || !data.reply) {
-            addMessage("ai", "⚠️ AI unavailable.");
-            return;
-        }
-
-        addMessage("ai", data.reply);
-
-    } catch (err) {
-        loading.remove();
-        addMessage("ai", "⚠️ Network error.");
-    }
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-    const getStartedBtn = document.getElementById("getStartedBtn");
-
-    if (getStartedBtn) {
-        getStartedBtn.addEventListener("click", showAuth);
-    }
-});
-
-
-function showAuth() {
-    document.getElementById("landing")?.classList.add("hidden");
-    document.getElementById("auth")?.classList.remove("hidden");
-}
-
-
-/* ---------- UI ---------- */
-function addMessage(role, text, loading = false) {
-    const messages = document.getElementById("messages");
-    const div = document.createElement("div");
-    div.className = `message ${role}`;
-    if (loading) div.classList.add("loading");
-    div.textContent = text;
-    messages.appendChild(div);
-    messages.scrollTop = messages.scrollHeight;
-    return div;
-}
-
-document.getElementById("sendBtn").addEventListener("click", sendMessage);
-
+    const data = await res.json();
+    messagesDiv.innerHTML += `<p><b>You:</b> ${message}</p>`;
+    messagesDiv.innerHTML += `<p><b>AI:</b> ${data.reply}</p>`;
+    messageInput.value = "";
+};
