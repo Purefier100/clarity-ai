@@ -160,6 +160,11 @@ document.getElementById("sendBtn").onclick = async () => {
 
     try {
         addMessage("You", message);
+        // Haptic feedback (Android)
+        if (navigator.vibrate) {
+            navigator.vibrate(30);
+        }
+
         saveChatPreview(message);
         messageInput.value = "";
         showLoading(true);
@@ -226,3 +231,48 @@ window.onload = () => {
     const loader = document.getElementById("loadingScreen");
     if (loader) loader.style.display = "none";
 };
+/* ================= SWIPE TO OPEN SIDEBAR ================= */
+
+let touchStartX = 0;
+let touchEndX = 0;
+
+chatDiv.addEventListener("touchstart", (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+});
+
+chatDiv.addEventListener("touchend", (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+});
+
+function handleSwipe() {
+    if (!sidebar) return;
+
+    const swipeDistance = touchEndX - touchStartX;
+
+    // Swipe right
+    if (swipeDistance > 80) {
+        sidebar.classList.add("open");
+    }
+
+    // Swipe left
+    if (swipeDistance < -80) {
+        sidebar.classList.remove("open");
+    }
+}
+const scrollBtn = document.getElementById("scrollBottomBtn");
+
+messagesDiv.addEventListener("scroll", () => {
+    const nearBottom =
+        messagesDiv.scrollHeight - messagesDiv.scrollTop - messagesDiv.clientHeight < 100;
+
+    scrollBtn.style.display = nearBottom ? "none" : "block";
+});
+
+scrollBtn.onclick = () => {
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+};
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/sw.js");
+}
+
