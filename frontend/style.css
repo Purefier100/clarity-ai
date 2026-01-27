@@ -240,77 +240,92 @@ body {
     }
 }
 
-/* ================= AUTH CTA STYLE (SIGN UP / LOG IN) ================= */
+/* ================= CHATGPT-STYLE AUTH ================= */
 #auth {
     position: fixed;
     inset: 0;
-    background: radial-gradient(circle at top, #020617, #000 85%);
+    background: rgba(2, 6, 23, 0.75);
+    backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
 }
 
-/* Auth wrapper */
+/* Compact auth card */
 #auth>* {
     width: 100%;
-    max-width: 420px;
-    padding: 40px 28px;
+    max-width: 380px;
+    background: #020617;
+    border: 1px solid #1e293b;
+    border-radius: 20px;
+    padding: 24px;
     display: flex;
     flex-direction: column;
-    align-items: stretch;
-    gap: 18px;
+    gap: 16px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
 }
 
-/* Hide inputs visually if you only want CTA buttons */
-#auth input {
-    display: none;
+/* ================= AUTH TABS ================= */
+#auth .auth-actions {
+    display: flex;
+    gap: 10px;
 }
 
-/* Primary CTA — Sign Up */
-#auth button:first-of-type {
-    height: 64px;
+#auth .auth-actions button {
+    flex: 1;
+    height: 48px;
     border-radius: 999px;
+    font-weight: 600;
+    border: 1px solid #1e293b;
+    background: transparent;
+    color: #e5e7eb;
+    cursor: pointer;
+}
+
+#auth .auth-actions button.primary {
     background: #ffffff;
     color: #020617;
-    font-size: 1.05rem;
+    border: none;
+}
+
+/* ================= FORM ================= */
+#auth .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Inputs */
+#auth input {
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid #1e293b;
+    background: #020617;
+    color: #e5e7eb;
+    font-size: 0.95rem;
+}
+
+/* Submit button */
+#auth .auth-form button {
+    margin-top: 6px;
+    height: 44px;
+    border-radius: 10px;
+    background: #38bdf8;
+    color: #020617;
     font-weight: 600;
     border: none;
     cursor: pointer;
-    transition: transform 0.15s ease, opacity 0.15s ease;
 }
 
-#auth button:first-of-type:hover {
-    transform: translateY(-1px);
-    opacity: 0.95;
-}
-
-/* Secondary CTA — Log In */
-#auth button:last-of-type {
-    height: 64px;
-    border-radius: 999px;
-    background: transparent;
-    color: #ffffff;
-    font-size: 1.05rem;
-    font-weight: 500;
-    border: 1.5px solid rgba(255, 255, 255, 0.35);
-    cursor: pointer;
-    transition: border 0.15s ease, opacity 0.15s ease;
-}
-
-#auth button:last-of-type:hover {
-    border-color: #ffffff;
-    opacity: 0.9;
-}
-
-/* Remove auth when logged in */
+/* Hide auth when logged in */
 #auth.hidden {
     display: none !important;
 }
 
-/* Mobile spacing */
+/* Mobile polish */
 @media (max-width: 480px) {
     #auth>* {
-        padding: 32px 20px;
+        margin: 0 16px;
     }
 }
