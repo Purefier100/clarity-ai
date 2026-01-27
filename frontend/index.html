@@ -3,35 +3,43 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>AI Chat App</title>
+    <title>Clarity AI</title>
+
+    <!-- ✅ MOBILE RESPONSIVE -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-    <div class="container">
-        <h2>AI Chat</h2>
 
-        <!-- AUTH -->
-        <div id="auth">
-            <input id="email" type="email" placeholder="Email" />
-            <input id="password" type="password" placeholder="Password" />
+    <!-- LANDING -->
+    <div id="landing" class="container">
+        <h1 class="brand">Clarity AI</h1>
+        <p class="tagline">Think clearly. Ask better. Get answers.</p>
+        <button id="getStarted" onclick="showAuth()">Get Started</button>
+    </div>
 
-            <button id="registerBtn">Register</button>
-            <button id="loginBtn">Login</button>
-        </div>
+    <!-- AUTH -->
+    <div id="auth" class="container hidden">
+        <input id="email" placeholder="Email" />
+        <input id="password" type="password" placeholder="Password" />
+        <button id="loginBtn">Login</button>
+    </div>
 
-        <!-- CHAT -->
-        <div id="chat" class="hidden">
-            <div id="messages"></div>
+    <!-- CHAT -->
+    <div id="chat" class="container hidden">
+        <h2>Clarity AI</h2>
 
-            <div class="input-area">
-                <input id="messageInput" placeholder="Type a message..." />
-                <button id="sendBtn">Send</button>
-            </div>
+        <div id="messages"></div>
+
+        <div class="input-area">
+            <input id="messageInput" placeholder="Ask Clarity…" />
+            <button onclick="sendMessage()">Send</button>
         </div>
     </div>
 
-    <!-- IMPORTANT: JS must load AFTER HTML -->
+    <!-- JS MUST LOAD LAST -->
     <script src="app.js"></script>
 </body>
 
