@@ -235,52 +235,49 @@ body {
 }
 
 /* ================= AUTH OVERLAY ================= */
+
 #auth {
     position: fixed;
     inset: 0;
-    z-index: 9999;
-
-    background: rgba(2, 6, 23, 0.75);
-    backdrop-filter: blur(12px);
+    z-index: 10000;
 
     display: flex;
     align-items: center;
     justify-content: center;
+
+    background: rgba(2, 6, 23, 0.85);
+    backdrop-filter: blur(12px);
 }
 
 /* ================= AUTH CARD ================= */
-#auth {
+
+#auth form {
     width: 100%;
-    max-width: 380px;
+    max-width: 360px;
 
-    background: linear-gradient(180deg,
-            rgba(2, 6, 23, 0.95),
-            rgba(2, 6, 23, 0.85));
-
+    background: #020617;
     border: 1px solid #1e293b;
-    border-radius: 20px;
+    border-radius: 18px;
 
     padding: 28px;
-    gap: 14px;
-
     display: flex;
     flex-direction: column;
+    gap: 14px;
 
-    box-shadow:
-        0 30px 80px rgba(0, 0, 0, 0.6),
-        inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    box-shadow: 0 40px 120px rgba(0, 0, 0, .75);
 }
 
 /* ================= INPUTS ================= */
+
 #auth input {
     height: 48px;
     padding: 0 14px;
 
     border-radius: 12px;
     border: 1px solid #1e293b;
-
     background: #020617;
     color: #e5e7eb;
+
     font-size: 0.95rem;
 }
 
@@ -289,48 +286,54 @@ body {
 }
 
 /* ================= BUTTONS ================= */
+
 #auth button {
     height: 48px;
     border-radius: 14px;
 
-    font-size: 0.95rem;
     font-weight: 600;
+    font-size: 0.95rem;
     cursor: pointer;
-
     border: none;
-    transition: all 0.2s ease;
 }
 
-/* Register (Primary) */
+/* Primary */
 #registerBtn {
     background: linear-gradient(135deg, #38bdf8, #0ea5e9);
     color: #020617;
 }
 
-#registerBtn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 8px 20px rgba(56, 189, 248, 0.35);
-}
-
-/* Login (Secondary) */
+/* Secondary */
 #loginBtn {
     background: #0f172a;
     color: #e5e7eb;
     border: 1px solid #1e293b;
 }
 
-#loginBtn:hover {
-    background: #020617;
+#auth button:hover {
+    opacity: 0.96;
 }
 
-/* ================= HIDE AFTER LOGIN ================= */
+/* ================= HIDE AUTH AFTER LOGIN ================= */
+
 #auth.hidden {
     display: none !important;
 }
 
+/* ================= APP HIDDEN BY DEFAULT ================= */
+
+#app {
+    display: none;
+}
+
+#app.active {
+    display: flex;
+}
+
 /* ================= MOBILE ================= */
+
 @media (max-width: 480px) {
-    #auth {
+    #auth form {
         margin: 0 16px;
         padding: 24px;
     }
