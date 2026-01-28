@@ -234,11 +234,11 @@ body {
     }
 }
 
-/* ================= AUTH OVERLAY ================= */
+/* ================= AUTH OVERLAY (FIXED & CENTERED) ================= */
 #auth {
     position: fixed;
     inset: 0;
-    z-index: 9999;
+    z-index: 10000;
 
     display: flex;
     align-items: center;
@@ -248,10 +248,9 @@ body {
 }
 
 /* ================= AUTH CARD ================= */
-.auth-row {
-    display: flex;
+#auth {
     flex-direction: column;
-    /* 🔑 ALWAYS VERTICAL */
+    /* 🔥 FORCE VERTICAL */
     gap: 14px;
 
     width: 100%;
@@ -267,9 +266,9 @@ body {
 }
 
 /* ================= INPUTS ================= */
-.auth-row input {
-    height: 48px;
+#auth input {
     width: 100%;
+    height: 48px;
 
     padding: 0 14px;
     border-radius: 14px;
@@ -280,14 +279,14 @@ body {
     font-size: 0.95rem;
 }
 
-.auth-row input::placeholder {
+#auth input::placeholder {
     color: #64748b;
 }
 
 /* ================= BUTTONS ================= */
-.auth-row button {
-    height: 48px;
+#auth button {
     width: 100%;
+    height: 48px;
 
     border-radius: 16px;
     border: none;
@@ -297,25 +296,24 @@ body {
     cursor: pointer;
 }
 
-/* Primary (Register / Sign up) */
+/* Register (primary) */
 #registerBtn {
     background: linear-gradient(135deg, #38bdf8, #0ea5e9);
     color: #020617;
 }
 
-/* Secondary (Login) */
+/* Login (secondary) */
 #loginBtn {
     background: #0f172a;
     color: #e5e7eb;
     border: 1px solid #1e293b;
 }
 
-/* Hover */
-.auth-row button:hover {
-    opacity: 0.96;
+#auth button:hover {
+    opacity: 0.95;
 }
 
-/* ================= HIDE AFTER LOGIN ================= */
+/* ================= HIDE AUTH AFTER LOGIN ================= */
 #auth.hidden {
     display: none !important;
 }
