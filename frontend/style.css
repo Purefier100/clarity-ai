@@ -46,27 +46,6 @@ body {
     flex-shrink: 0;
 }
 
-/* ================= AUTH ================= */
-#auth {
-    position: absolute;
-    inset: 0;
-    z-index: 10;
-    background: rgba(2, 6, 23, 0.96);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 14px;
-    padding: 32px;
-    max-width: 360px;
-    margin: auto;
-    border-radius: 14px;
-}
-
-/* Hide auth after login */
-#auth.hidden {
-    display: none;
-}
-
 /* ================= SIDEBAR ================= */
 #sidebar {
     width: 260px;
@@ -344,6 +323,102 @@ body {
 }
 
 /* ================= MOBILE POLISH ================= */
+@media (max-width: 480px) {
+    #auth {
+        margin: 0 16px;
+        padding: 24px;
+    }
+}
+
+/* ================= AUTH OVERLAY (FIXED) ================= */
+
+#auth {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background: rgba(2, 6, 23, 0.75);
+    backdrop-filter: blur(10px);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ================= AUTH CARD ================= */
+
+#auth {
+    pointer-events: auto;
+}
+
+/* Card layout */
+#auth {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+
+    width: 100%;
+    max-width: 360px;
+
+    background: #020617;
+    border: 1px solid #1e293b;
+    border-radius: 18px;
+    padding: 28px;
+
+    box-shadow: 0 40px 120px rgba(0, 0, 0, 0.7);
+}
+
+/* ================= INPUTS ================= */
+
+#auth input {
+    height: 48px;
+    padding: 0 14px;
+    border-radius: 12px;
+    border: 1px solid #1e293b;
+    background: #020617;
+    color: #e5e7eb;
+    font-size: 0.95rem;
+}
+
+#auth input::placeholder {
+    color: #64748b;
+}
+
+/* ================= BUTTONS ================= */
+
+#auth button {
+    height: 48px;
+    border-radius: 14px;
+    border: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+/* Register = primary */
+#registerBtn {
+    background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+    color: #020617;
+}
+
+/* Login = secondary */
+#loginBtn {
+    background: #0f172a;
+    color: #e5e7eb;
+    border: 1px solid #1e293b;
+}
+
+#auth button:hover {
+    opacity: 0.95;
+}
+
+/* ================= HIDE WHEN LOGGED IN ================= */
+
+#auth.hidden {
+    display: none !important;
+}
+
+/* ================= MOBILE ================= */
+
 @media (max-width: 480px) {
     #auth {
         margin: 0 16px;
