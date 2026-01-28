@@ -234,11 +234,11 @@ body {
     }
 }
 
-/* ================= AUTH OVERLAY (FIXED & CENTERED) ================= */
+/* ================= AUTH OVERLAY ================= */
 #auth {
     position: fixed;
     inset: 0;
-    z-index: 10000;
+    z-index: 9999;
 
     display: flex;
     align-items: center;
@@ -248,9 +248,10 @@ body {
 }
 
 /* ================= AUTH CARD ================= */
-#auth {
+.auth-row {
+    display: flex;
     flex-direction: column;
-    /* 🔥 FORCE VERTICAL */
+    /* 🔑 ALWAYS VERTICAL */
     gap: 14px;
 
     width: 100%;
@@ -266,9 +267,9 @@ body {
 }
 
 /* ================= INPUTS ================= */
-#auth input {
-    width: 100%;
+.auth-row input {
     height: 48px;
+    width: 100%;
 
     padding: 0 14px;
     border-radius: 14px;
@@ -279,14 +280,14 @@ body {
     font-size: 0.95rem;
 }
 
-#auth input::placeholder {
+.auth-row input::placeholder {
     color: #64748b;
 }
 
 /* ================= BUTTONS ================= */
-#auth button {
-    width: 100%;
+.auth-row button {
     height: 48px;
+    width: 100%;
 
     border-radius: 16px;
     border: none;
@@ -296,38 +297,25 @@ body {
     cursor: pointer;
 }
 
-/* Register (primary) */
+/* Primary (Register / Sign up) */
 #registerBtn {
     background: linear-gradient(135deg, #38bdf8, #0ea5e9);
     color: #020617;
 }
 
-/* Login (secondary) */
+/* Secondary (Login) */
 #loginBtn {
     background: #0f172a;
     color: #e5e7eb;
     border: 1px solid #1e293b;
 }
 
-#auth button:hover {
-    opacity: 0.95;
+/* Hover */
+.auth-row button:hover {
+    opacity: 0.96;
 }
 
-/* ================= HIDE AUTH AFTER LOGIN ================= */
+/* ================= HIDE AFTER LOGIN ================= */
 #auth.hidden {
     display: none !important;
-}
-
-/* ================= APP STATE ================= */
-
-/* Hide app until authenticated */
-#chat,
-#sidebar {
-    display: none;
-}
-
-/* Show app when logged in */
-body.logged-in #chat,
-body.logged-in #sidebar {
-    display: flex;
 }
