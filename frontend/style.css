@@ -48,18 +48,47 @@ body {
 
 /* ================= AUTH ================= */
 #auth {
-    position: fixed;
+    position: absolute;
     inset: 0;
-    z-index: 100;
+    z-index: 10;
     background: rgba(2, 6, 23, 0.96);
     display: flex;
-    align-items: center;
+    flex-direction: column;
     justify-content: center;
+    gap: 14px;
+    padding: 32px;
+    max-width: 360px;
+    margin: auto;
+    border-radius: 14px;
 }
 
+/* Hide auth after login */
 #auth.hidden {
-    display: none !important;
+    display: none;
 }
+
+#auth input {
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid #1e293b;
+    background: #020617;
+    color: #e5e7eb;
+}
+
+#auth input::placeholder {
+    color: #64748b;
+}
+
+#auth button {
+    padding: 14px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+    color: #020617;
+}
+
 
 /* ================= SIDEBAR ================= */
 #sidebar {
@@ -237,95 +266,5 @@ body {
     .input-area {
         max-width: 100%;
         padding-bottom: calc(14px + env(safe-area-inset-bottom));
-    }
-}
-
-/* ================= CHATGPT-STYLE AUTH ================= */
-#auth {
-    position: fixed;
-    inset: 0;
-    background: rgba(2, 6, 23, 0.75);
-    backdrop-filter: blur(8px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-}
-
-/* Compact auth card */
-#auth>* {
-    width: 100%;
-    max-width: 380px;
-    background: #020617;
-    border: 1px solid #1e293b;
-    border-radius: 20px;
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
-}
-
-/* ================= AUTH TABS ================= */
-#auth .auth-actions {
-    display: flex;
-    gap: 10px;
-}
-
-#auth .auth-actions button {
-    flex: 1;
-    height: 48px;
-    border-radius: 999px;
-    font-weight: 600;
-    border: 1px solid #1e293b;
-    background: transparent;
-    color: #e5e7eb;
-    cursor: pointer;
-}
-
-#auth .auth-actions button.primary {
-    background: #ffffff;
-    color: #020617;
-    border: none;
-}
-
-/* ================= FORM ================= */
-#auth .auth-form {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-/* Inputs */
-#auth input {
-    padding: 12px 14px;
-    border-radius: 10px;
-    border: 1px solid #1e293b;
-    background: #020617;
-    color: #e5e7eb;
-    font-size: 0.95rem;
-}
-
-/* Submit button */
-#auth .auth-form button {
-    margin-top: 6px;
-    height: 44px;
-    border-radius: 10px;
-    background: #38bdf8;
-    color: #020617;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-}
-
-/* Hide auth when logged in */
-#auth.hidden {
-    display: none !important;
-}
-
-/* Mobile polish */
-@media (max-width: 480px) {
-    #auth>* {
-        margin: 0 16px;
     }
 }
