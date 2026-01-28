@@ -306,59 +306,78 @@ body:has(#auth.hidden) #chat {
 }
 
 /* ================= MOBILE ================= */
+/* ================= MOBILE ================= */
 @media (max-width: 768px) {
-    body {
-        align-items: flex-start;
-    }
 
-    .container {
-        flex-direction: column;
-        height: 100dvh;
-        border-radius: 0;
-    }
-
-    .container h2 {
-        padding-top: calc(16px + env(safe-area-inset-top));
-        font-size: 1rem;
-    }
-
+    /* ===== SIDEBAR MOBILE ===== */
     #sidebar {
         position: fixed;
-        left: -100%;
         top: 0;
+        left: -100%;
+        width: 78%;
+        max-width: 300px;
         height: 100dvh;
-        z-index: 20;
+        background: rgba(15, 23, 42, 0.98);
+        z-index: 999;
+        display: flex;
+        flex-direction: column;
         transition: left 0.3s ease;
+        border-right: 1px solid rgba(148, 163, 184, 0.15);
     }
 
     #sidebar.open {
         left: 0;
     }
 
+    /* Chat takes full screen */
     #chat {
+        width: 100%;
+    }
+
+    /* Prevent background scrolling when sidebar open */
+    body.sidebar-open {
+        overflow: hidden;
+    }
+
+    /* ===== SIDEBAR FOOTER (LOGOUT) ===== */
+    .sidebar-footer {
         padding: 16px;
+        margin-top: auto;
+        background: rgba(15, 23, 42, 0.95);
     }
 
-    #messages {
-        max-width: 100%;
-        padding: 20px;
+    #logoutBtn {
+        width: 100%;
+        height: 48px;
+        font-size: 0.95rem;
+        border-radius: 14px;
     }
 
-    #messages p {
-        max-width: 85%;
-    }
-
-    .input-area {
-        max-width: 100%;
-        padding-bottom: calc(16px + env(safe-area-inset-bottom));
-    }
-
-    .auth-row {
-        max-width: 380px;
-        padding: 48px 32px;
-        margin: 0 16px;
+    /* ===== HAMBURGER BUTTON ===== */
+    #toggleSidebar {
+        display: flex;
+        position: fixed;
+        top: 14px;
+        right: 14px;
+        z-index: 1001;
+        background: rgba(30, 41, 59, 0.9);
+        color: #e5e7eb;
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        border-radius: 12px;
+        width: 44px;
+        height: 44px;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
     }
 }
+
+/* ===== DESKTOP ===== */
+#toggleSidebar {
+    display: none;
+}
+
+
 
 /* ================= SMOOTH SCROLLING ================= */
 #messages,

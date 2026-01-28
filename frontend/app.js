@@ -181,3 +181,8 @@ window.addEventListener("DOMContentLoaded", () => {
     renderChats();
 });
 
+toggleSidebar.onclick = () => {
+    sidebar.classList.toggle("open");
+    document.body.classList.toggle("sidebar-open");
+};
+
