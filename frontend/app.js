@@ -13,8 +13,9 @@ const chatList = document.getElementById("chatList");
 const toggleSidebar = document.getElementById("toggleSidebar");
 const sidebar = document.getElementById("sidebar");
 const logoutBtn = document.getElementById("logoutBtn");
+const newChatBtn = document.getElementById("newChat");
 
-/* ================= CHAT STORAGE ================= */
+/* ================= STORAGE ================= */
 
 function getChats() {
     return JSON.parse(localStorage.getItem("chats") || "[]");
@@ -24,21 +25,18 @@ function saveChats(chats) {
     localStorage.setItem("chats", JSON.stringify(chats));
 }
 
-let sessionId = localStorage.getItem("activeChatId") || createNewChatId();
-
 function createNewChatId() {
     const id = `chat-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     localStorage.setItem("activeChatId", id);
     return id;
 }
 
-function getCurrentChat() {
-    const chats = getChats();
-    return chats.find(c => c.id === sessionId);
-}
+let sessionId = localStorage.getItem("activeChatId") || createNewChatId();
 
-function ensureChatExists(firstMessage = "") {
-    let chats = getChats();
+/* ================= CHAT HELPERS ================= */
+
+function ensureChatExists() {
+    const chats = getChats();
     let chat = chats.find(c => c.id === sessionId);
 
     if (!chat) {
@@ -52,7 +50,11 @@ function ensureChatExists(firstMessage = "") {
     }
 }
 
-/* ================= HELPERS ================= */
+function getCurrentChat() {
+    return getChats().find(c => c.id === sessionId);
+}
+
+/* ================= UI HELPERS ================= */
 
 function addMessage(sender, text, isError = false) {
     const p = document.createElement("p");
@@ -106,7 +108,12 @@ function renderChats() {
             e.stopPropagation();
             const updated = chats.filter(c => c.id !== chat.id);
             saveChats(updated);
-            messagesDiv.innerHTML = "";
+
+            if (sessionId === chat.id) {
+                messagesDiv.innerHTML = "";
+                sessionId = createNewChatId();
+            }
+
             renderChats();
         };
 
@@ -169,14 +176,11 @@ document.getElementById("loginBtn").onclick = async () => {
 /* ================= CHAT ================= */
 
 sendBtn.onclick = async () => {
-    if (sendBtn.disabled) return;
-
     const token = localStorage.getItem("token");
     const message = messageInput.value.trim();
     if (!token || !message) return;
 
     ensureChatExists();
-
     const chats = getChats();
     const chat = chats.find(c => c.id === sessionId);
 
@@ -188,27 +192,28 @@ sendBtn.onclick = async () => {
     messageInput.value = "";
     showLoading(true);
 
-    const res = await fetch(`${API_BASE}/api/ai/chat`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ sessionId, message })
-    });
+    try {
+        const res = await fetch(`${API_BASE}/api/ai/chat`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ sessionId, message })
+        });
 
-    const data = await res.json();
+        const data = await res.json();
+        if (data.success) {
+            chat.messages.push({ role: "ai", text: data.reply });
+            chat.updatedAt = Date.now();
+            saveChats(chats);
 
-    if (data.success) {
-        chat.messages.push({ role: "ai", text: data.reply });
-        chat.updatedAt = Date.now();
-        saveChats(chats);
-
-        streamText(data.reply);
-        renderChats();
+            streamText(data.reply);
+            renderChats();
+        }
+    } finally {
+        showLoading(false);
     }
-
-    showLoading(false);
 };
 
 messageInput.addEventListener("keydown", e => {
@@ -217,6 +222,23 @@ messageInput.addEventListener("keydown", e => {
         sendBtn.click();
     }
 });
+
+/* ================= NEW CHAT ================= */
+
+newChatBtn.onclick = () => {
+    sessionId = createNewChatId();
+
+    const chats = getChats();
+    chats.unshift({
+        id: sessionId,
+        messages: [],
+        updatedAt: Date.now()
+    });
+
+    saveChats(chats);
+    messagesDiv.innerHTML = "";
+    renderChats();
+};
 
 /* ================= LOGOUT ================= */
 
@@ -238,7 +260,7 @@ window.addEventListener("DOMContentLoaded", () => {
         document.body.classList.add("logged-in");
         sendBtn.disabled = false;
 
-        if (chats.length > 0) {
+        if (chats.length) {
             sessionId = localStorage.getItem("activeChatId") || chats[0].id;
             loadChat(chats.find(c => c.id === sessionId));
         } else {
