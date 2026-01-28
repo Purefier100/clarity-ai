@@ -14,7 +14,43 @@ const toggleSidebar = document.getElementById("toggleSidebar");
 const sidebar = document.getElementById("sidebar");
 const logoutBtn = document.getElementById("logoutBtn");
 
-let sessionId = `user-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+/* ================= CHAT STORAGE ================= */
+
+function getChats() {
+    return JSON.parse(localStorage.getItem("chats") || "[]");
+}
+
+function saveChats(chats) {
+    localStorage.setItem("chats", JSON.stringify(chats));
+}
+
+let sessionId = localStorage.getItem("activeChatId") || createNewChatId();
+
+function createNewChatId() {
+    const id = `chat-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    localStorage.setItem("activeChatId", id);
+    return id;
+}
+
+function getCurrentChat() {
+    const chats = getChats();
+    return chats.find(c => c.id === sessionId);
+}
+
+function ensureChatExists(firstMessage = "") {
+    let chats = getChats();
+    let chat = chats.find(c => c.id === sessionId);
+
+    if (!chat) {
+        chat = {
+            id: sessionId,
+            messages: [],
+            updatedAt: Date.now()
+        };
+        chats.unshift(chat);
+        saveChats(chats);
+    }
+}
 
 /* ================= HELPERS ================= */
 
@@ -35,7 +71,7 @@ function streamText(text) {
         p.innerHTML = `<b>AI:</b> ${text.slice(0, i)}`;
         i++;
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        if (i >= text.length) clearInterval(interval);
+        if (i > text.length) clearInterval(interval);
     }, 15);
 }
 
@@ -44,37 +80,44 @@ function showLoading(show) {
     sendBtn.textContent = show ? "Sending..." : "Send";
 }
 
-/* ================= CHAT HISTORY ================= */
-
-function saveChatPreview(text) {
-    const chats = JSON.parse(localStorage.getItem("chats") || "[]");
-    chats.unshift({ id: sessionId, preview: text.slice(0, 30) });
-    localStorage.setItem("chats", JSON.stringify(chats));
-    renderChats();
-}
+/* ================= SIDEBAR ================= */
 
 function renderChats() {
     chatList.innerHTML = "";
-    const chats = JSON.parse(localStorage.getItem("chats") || "[]");
+    const chats = getChats().sort((a, b) => b.updatedAt - a.updatedAt);
 
     chats.forEach(chat => {
+        const lastMsg = chat.messages.at(-1)?.text || "New chat";
+
         const row = document.createElement("div");
         row.className = "chat-item";
         row.innerHTML = `
-            <span>${chat.preview}</span>
+            <span>${lastMsg.slice(0, 30)}</span>
             <button class="delete-chat">✕</button>
         `;
 
-        row.onclick = () => location.reload();
+        row.onclick = () => {
+            sessionId = chat.id;
+            localStorage.setItem("activeChatId", sessionId);
+            loadChat(chat);
+        };
 
         row.querySelector(".delete-chat").onclick = (e) => {
             e.stopPropagation();
             const updated = chats.filter(c => c.id !== chat.id);
-            localStorage.setItem("chats", JSON.stringify(updated));
+            saveChats(updated);
+            messagesDiv.innerHTML = "";
             renderChats();
         };
 
         chatList.appendChild(row);
+    });
+}
+
+function loadChat(chat) {
+    messagesDiv.innerHTML = "";
+    chat.messages.forEach(m => {
+        addMessage(m.role === "user" ? "You" : "AI", m.text);
     });
 }
 
@@ -83,7 +126,6 @@ function renderChats() {
 document.getElementById("registerBtn").onclick = async () => {
     const email = emailInput.value.trim();
     const password = passwordInput.value;
-
     if (!email || password.length < 6) return alert("Invalid credentials");
 
     const res = await fetch(`${API_BASE}/api/auth/register`, {
@@ -115,10 +157,12 @@ document.getElementById("loginBtn").onclick = async () => {
         authDiv.classList.add("hidden");
         chatDiv.classList.remove("hidden");
         document.body.classList.add("logged-in");
-        sendBtn.disabled = false;
 
+        sendBtn.disabled = false;
         messagesDiv.innerHTML = "";
+
         addMessage("System", `Welcome back, ${email}!`);
+        renderChats();
     }
 };
 
@@ -131,8 +175,16 @@ sendBtn.onclick = async () => {
     const message = messageInput.value.trim();
     if (!token || !message) return;
 
+    ensureChatExists();
+
+    const chats = getChats();
+    const chat = chats.find(c => c.id === sessionId);
+
+    chat.messages.push({ role: "user", text: message });
+    chat.updatedAt = Date.now();
+    saveChats(chats);
+
     addMessage("You", message);
-    saveChatPreview(message);
     messageInput.value = "";
     showLoading(true);
 
@@ -146,7 +198,16 @@ sendBtn.onclick = async () => {
     });
 
     const data = await res.json();
-    if (data.success) streamText(data.reply);
+
+    if (data.success) {
+        chat.messages.push({ role: "ai", text: data.reply });
+        chat.updatedAt = Date.now();
+        saveChats(chats);
+
+        streamText(data.reply);
+        renderChats();
+    }
+
     showLoading(false);
 };
 
@@ -161,7 +222,6 @@ messageInput.addEventListener("keydown", e => {
 
 logoutBtn.onclick = () => {
     localStorage.clear();
-    sidebar.classList.remove("open");
     location.reload();
 };
 
@@ -170,22 +230,30 @@ logoutBtn.onclick = () => {
 window.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem("token");
     const email = localStorage.getItem("userEmail");
+    const chats = getChats();
 
     if (token) {
         authDiv.classList.add("hidden");
         chatDiv.classList.remove("hidden");
         document.body.classList.add("logged-in");
         sendBtn.disabled = false;
-        addMessage("System", `Welcome back, ${email}`);
+
+        if (chats.length > 0) {
+            sessionId = localStorage.getItem("activeChatId") || chats[0].id;
+            loadChat(chats.find(c => c.id === sessionId));
+        } else {
+            addMessage("System", `Welcome back, ${email}`);
+        }
+
+        renderChats();
     } else {
         sendBtn.disabled = true;
     }
-
-    renderChats();
 });
+
+/* ================= MOBILE SIDEBAR ================= */
 
 toggleSidebar.onclick = () => {
     sidebar.classList.toggle("open");
     document.body.classList.toggle("sidebar-open");
 };
-
