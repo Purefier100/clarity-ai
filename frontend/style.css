@@ -1,4 +1,13 @@
 /* ================= RESET ================= */
+
+/* ================= AUTH FIRST ================= */
+
+/* Hide chat until user logs in */
+#sidebar,
+#chat {
+    display: none;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -322,4 +331,25 @@ body {
         margin: 0 16px;
         padding: 24px;
     }
+}
+
+/* ================= AUTH FIRST ================= */
+
+/* Hide chat by default */
+#sidebar,
+#chat {
+    display: none;
+}
+
+/* Show chat after login */
+#auth.hidden~.container #sidebar,
+#auth.hidden~.container #chat {
+    display: flex;
+}
+
+/* Auth always on top */
+#auth {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
 }
