@@ -234,116 +234,104 @@ body {
     }
 }
 
-/* ================= CHATGPT-STYLE AUTH SCREEN ================= */
-
+/* ================= AUTH OVERLAY ================= */
 #auth {
     position: fixed;
     inset: 0;
     z-index: 9999;
 
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    align-items: center;
+    justify-content: center;
 
     background: radial-gradient(circle at top, #0f172a, #020617 70%);
-    color: #e5e7eb;
 }
 
-/* ================= TOP SECTION ================= */
+/* ================= AUTH CARD ================= */
+.auth-card {
+    width: 100%;
+    max-width: 380px;
 
-.auth-header {
-    padding-top: 80px;
+    padding: 32px 28px;
+    border-radius: 20px;
+
+    background: #020617;
+    border: 1px solid #1e293b;
+
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    box-shadow: 0 40px 120px rgba(0, 0, 0, 0.8);
+}
+
+/* ================= TITLE ================= */
+.auth-card h1 {
     text-align: center;
-}
-
-.auth-header h1 {
     font-size: 2rem;
     font-weight: 700;
     color: #facc15;
-    /* yellow like ChatGPT */
+
+    margin-bottom: 12px;
 }
 
-/* ================= BOTTOM ACTIONS ================= */
-
-.auth-actions {
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-}
-
-/* Inputs */
-.auth-actions input {
+/* ================= INPUTS ================= */
+.auth-card input {
     height: 52px;
     padding: 0 16px;
 
     border-radius: 14px;
     border: 1px solid #1e293b;
+
     background: #020617;
     color: #e5e7eb;
 
     font-size: 1rem;
 }
 
-.auth-actions input::placeholder {
+.auth-card input::placeholder {
     color: #64748b;
 }
 
-/* Buttons */
-.auth-actions button {
+/* ================= BUTTONS ================= */
+.auth-card button {
     height: 54px;
     border-radius: 999px;
 
     font-size: 1rem;
     font-weight: 600;
+
     cursor: pointer;
     border: none;
 }
 
-/* Google / primary */
-#googleBtn {
-    background: #ffffff;
-    color: #020617;
-}
-
-/* Sign up */
+/* Primary */
 #registerBtn {
     background: #e5e7eb;
     color: #020617;
 }
 
-/* Login */
+/* Secondary */
 #loginBtn {
     background: transparent;
     color: #e5e7eb;
     border: 1px solid #1e293b;
 }
 
-/* ================= HIDE WHEN LOGGED IN ================= */
+/* Hover */
+.auth-card button:hover {
+    opacity: 0.95;
+}
 
+/* ================= MOBILE ================= */
+@media (max-width: 480px) {
+    .auth-card {
+        margin: 0 16px;
+        padding: 28px 20px;
+    }
+}
+
+/* ================= HIDE AFTER LOGIN ================= */
 #auth.hidden {
     display: none !important;
-}
-
-/* ================= APP HIDDEN BY DEFAULT ================= */
-
-#app {
-    display: none;
-}
-
-#app.active {
-    display: flex;
-}
-
-/* ================= DESKTOP ================= */
-
-@media (min-width: 768px) {
-    #auth {
-        align-items: center;
-    }
-
-    .auth-actions {
-        max-width: 420px;
-        width: 100%;
-    }
 }
