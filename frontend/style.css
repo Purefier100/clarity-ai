@@ -1,18 +1,9 @@
 /* ================= RESET ================= */
-
-/* ================= AUTH FIRST ================= */
-
-/* Hide chat until user logs in */
-#sidebar,
-#chat {
-    display: none;
-}
-
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 html,
@@ -24,7 +15,7 @@ body {
 /* ================= BODY ================= */
 body {
     min-height: 100vh;
-    background: radial-gradient(circle at top, #0f172a, #020617 70%);
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
     color: #e5e7eb;
     display: flex;
     justify-content: center;
@@ -36,40 +27,41 @@ body {
     width: 100%;
     max-width: 1200px;
     height: 92vh;
-    background: rgba(2, 6, 23, 0.95);
-    border: 1px solid #1e293b;
-    border-radius: 16px;
+    background: rgba(15, 23, 42, 0.97);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    border-radius: 24px;
     display: flex;
     flex-direction: row;
-    /* desktop */
     overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
 /* ================= HEADER ================= */
 .container h2 {
-    padding: 16px;
-    background: #020617;
-    border-bottom: 1px solid #1e293b;
-    font-size: 1.1rem;
+    padding: 20px 24px;
+    background: rgba(15, 23, 42, 0.95);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    font-size: 1.125rem;
     font-weight: 600;
+    letter-spacing: -0.025em;
     flex-shrink: 0;
 }
 
 /* ================= SIDEBAR ================= */
 #sidebar {
-    width: 260px;
-    background: #020617;
-    border-right: 1px solid #1e293b;
-    display: flex;
+    width: 280px;
+    background: rgba(15, 23, 42, 0.95);
+    border-right: 1px solid rgba(148, 163, 184, 0.1);
+    display: none;
     flex-direction: column;
 }
 
 .sidebar-header {
-    padding: 14px;
+    padding: 16px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #1e293b;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
 }
 
 #chatList {
@@ -78,20 +70,21 @@ body {
 }
 
 .chat-item {
-    padding: 12px 14px;
+    padding: 14px 20px;
     cursor: pointer;
-    border-bottom: 1px solid #1e293b;
-    font-size: 0.9rem;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.05);
+    font-size: 0.9375rem;
+    transition: background-color 0.2s ease;
 }
 
 .chat-item:hover {
-    background: rgba(56, 189, 248, 0.1);
+    background: rgba(56, 189, 248, 0.08);
 }
 
-/* ================= CHAT (CENTER COLUMN LIKE PHOTO 2) ================= */
+/* ================= CHAT (CENTER COLUMN) ================= */
 #chat {
     flex: 1;
-    display: flex;
+    display: none;
     flex-direction: column;
     padding: 24px 0;
     min-height: 0;
@@ -100,40 +93,41 @@ body {
 /* ================= MESSAGES ================= */
 #messages {
     flex: 1;
-    max-width: 640px;
+    max-width: 680px;
     margin: 0 auto;
-    padding: 24px;
+    padding: 28px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    background: rgba(2, 6, 23, 0.6);
-    border: 1px solid #1e293b;
-    border-radius: 18px;
+    gap: 16px;
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    border-radius: 20px;
 }
 
 /* ================= MESSAGE BUBBLES ================= */
 #messages p {
     max-width: 75%;
-    padding: 14px 16px;
-    border-radius: 14px;
-    line-height: 1.45;
-    font-size: 0.95rem;
-    background: #020617;
-    border: 1px solid #1e293b;
-    animation: messageFadeIn 0.25s ease forwards;
+    padding: 16px 20px;
+    border-radius: 16px;
+    line-height: 1.6;
+    font-size: 0.9375rem;
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    animation: messageFadeIn 0.3s ease forwards;
 }
 
 #messages p:has(b:contains("You")) {
-    background: #38bdf8;
+    background: linear-gradient(135deg, #38bdf8, #0ea5e9);
     color: #020617;
     margin-left: auto;
     border: none;
+    box-shadow: 0 4px 12px rgba(56, 189, 248, 0.2);
 }
 
 #messages p:has(b:contains("System")) {
-    background: rgba(56, 189, 248, 0.12);
-    border: 1px solid #38bdf8;
+    background: rgba(56, 189, 248, 0.08);
+    border: 1px solid rgba(56, 189, 248, 0.2);
     color: #bae6fd;
     margin: 0 auto;
     text-align: center;
@@ -141,41 +135,55 @@ body {
 
 /* ================= INPUT ================= */
 .input-area {
-    max-width: 640px;
-    margin: 16px auto 0;
+    max-width: 680px;
+    margin: 20px auto 0;
     display: flex;
-    gap: 8px;
-    padding: 14px;
-    background: #020617;
-    border-top: 1px solid #1e293b;
-    border-radius: 16px;
+    gap: 12px;
+    padding: 16px 20px;
+    background: rgba(15, 23, 42, 0.95);
+    border-top: 1px solid rgba(148, 163, 184, 0.1);
+    border-radius: 20px;
     flex-shrink: 0;
 }
 
 .input-area input {
     flex: 1;
-    padding: 14px 16px;
+    padding: 14px 18px;
     border-radius: 14px;
-    border: 1px solid #1e293b;
-    background: #020617;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    background: rgba(30, 41, 59, 0.5);
     color: #e5e7eb;
+    font-size: 0.9375rem;
+    transition: border-color 0.2s ease;
+}
+
+.input-area input:focus {
+    outline: none;
+    border-color: #38bdf8;
 }
 
 .input-area button {
-    padding: 14px 20px;
+    padding: 14px 24px;
     border-radius: 14px;
     border: none;
     cursor: pointer;
     font-weight: 600;
+    font-size: 0.9375rem;
     background: linear-gradient(135deg, #38bdf8, #0ea5e9);
     color: #020617;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-area button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 16px rgba(56, 189, 248, 0.3);
 }
 
 /* ================= ANIMATIONS ================= */
 @keyframes messageFadeIn {
     from {
         opacity: 0;
-        transform: translateY(4px);
+        transform: translateY(8px);
     }
 
     to {
@@ -184,9 +192,138 @@ body {
     }
 }
 
+/* ================= AUTH OVERLAY ================= */
+#auth {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+}
+
+/* ================= AUTH CARD ================= */
+.auth-row {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 420px;
+    padding: 48px 40px;
+    border-radius: 24px;
+    background: rgba(15, 23, 42, 0.98);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    box-shadow:
+        0 20px 25px -5px rgba(0, 0, 0, 0.3),
+        0 10px 10px -5px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+/* ================= AUTH HEADER ================= */
+.auth-row::before {
+    content: 'Welcome Back';
+    display: block;
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: #f1f5f9;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.auth-row::after {
+    content: 'Sign in to continue to your account';
+    display: block;
+    font-size: 0.9375rem;
+    color: #94a3b8;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+/* ================= INPUTS ================= */
+.auth-row input {
+    height: 54px;
+    width: 100%;
+    padding: 0 18px;
+    border-radius: 12px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    background: rgba(30, 41, 59, 0.5);
+    color: #f1f5f9;
+    font-size: 0.9375rem;
+    transition: all 0.2s ease;
+}
+
+.auth-row input:focus {
+    outline: none;
+    border-color: #38bdf8;
+    background: rgba(30, 41, 59, 0.7);
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
+}
+
+.auth-row input::placeholder {
+    color: #64748b;
+}
+
+/* ================= BUTTONS ================= */
+.auth-row button {
+    height: 54px;
+    width: 100%;
+    border-radius: 12px;
+    border: none;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* Primary (Register / Sign up) */
+#registerBtn {
+    background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+    color: #020617;
+    box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
+}
+
+#registerBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(56, 189, 248, 0.35);
+}
+
+#registerBtn:active {
+    transform: translateY(0);
+}
+
+/* Secondary (Login) */
+#loginBtn {
+    background: rgba(30, 41, 59, 0.8);
+    color: #f1f5f9;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+#loginBtn:hover {
+    background: rgba(30, 41, 59, 1);
+    border-color: rgba(148, 163, 184, 0.3);
+}
+
+/* ================= DIVIDER ================= */
+.auth-row input:first-of-type {
+    margin-top: 8px;
+}
+
+/* ================= HIDE AFTER LOGIN ================= */
+#auth.hidden {
+    display: none !important;
+}
+
+/* Show chat after login */
+body:has(#auth.hidden) #sidebar,
+body:has(#auth.hidden) #chat {
+    display: flex;
+}
+
 /* ================= MOBILE ================= */
 @media (max-width: 768px) {
-
     body {
         align-items: flex-start;
     }
@@ -198,7 +335,7 @@ body {
     }
 
     .container h2 {
-        padding-top: calc(14px + env(safe-area-inset-top));
+        padding-top: calc(16px + env(safe-area-inset-top));
         font-size: 1rem;
     }
 
@@ -216,106 +353,62 @@ body {
     }
 
     #chat {
-        padding: 12px;
+        padding: 16px;
     }
 
     #messages {
         max-width: 100%;
-        padding: 14px;
+        padding: 20px;
     }
 
     #messages p {
-        max-width: 100%;
+        max-width: 85%;
     }
 
     .input-area {
         max-width: 100%;
-        padding-bottom: calc(14px + env(safe-area-inset-bottom));
+        padding-bottom: calc(16px + env(safe-area-inset-bottom));
+    }
+
+    .auth-row {
+        max-width: 360px;
+        padding: 36px 28px;
+        margin: 0 16px;
+    }
+
+    .auth-row::before {
+        font-size: 1.5rem;
+    }
+
+    .auth-row::after {
+        font-size: 0.875rem;
     }
 }
 
-/* ================= AUTH OVERLAY ================= */
-#auth {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background: radial-gradient(circle at top, #0f172a, #020617 70%);
+/* ================= SMOOTH SCROLLING ================= */
+#messages,
+#chatList {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(148, 163, 184, 0.3) transparent;
 }
 
-/* ================= AUTH CARD ================= */
-.auth-row {
-    display: flex;
-    flex-direction: column;
-    /* 🔑 ALWAYS VERTICAL */
-    gap: 14px;
-
-    width: 100%;
-    max-width: 360px;
-
-    padding: 28px;
-    border-radius: 20px;
-
-    background: rgba(2, 6, 23, 0.95);
-    border: 1px solid #1e293b;
-
-    box-shadow: 0 40px 120px rgba(0, 0, 0, 0.8);
+#messages::-webkit-scrollbar,
+#chatList::-webkit-scrollbar {
+    width: 6px;
 }
 
-/* ================= INPUTS ================= */
-.auth-row input {
-    height: 48px;
-    width: 100%;
-
-    padding: 0 14px;
-    border-radius: 14px;
-    border: 1px solid #1e293b;
-
-    background: #020617;
-    color: #e5e7eb;
-    font-size: 0.95rem;
+#messages::-webkit-scrollbar-track,
+#chatList::-webkit-scrollbar-track {
+    background: transparent;
 }
 
-.auth-row input::placeholder {
-    color: #64748b;
+#messages::-webkit-scrollbar-thumb,
+#chatList::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.3);
+    border-radius: 3px;
 }
 
-/* ================= BUTTONS ================= */
-.auth-row button {
-    height: 48px;
-    width: 100%;
-
-    border-radius: 16px;
-    border: none;
-
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-/* Primary (Register / Sign up) */
-#registerBtn {
-    background: linear-gradient(135deg, #38bdf8, #0ea5e9);
-    color: #020617;
-}
-
-/* Secondary (Login) */
-#loginBtn {
-    background: #0f172a;
-    color: #e5e7eb;
-    border: 1px solid #1e293b;
-}
-
-/* Hover */
-.auth-row button:hover {
-    opacity: 0.96;
-}
-
-/* ================= HIDE AFTER LOGIN ================= */
-#auth.hidden {
-    display: none !important;
+#messages::-webkit-scrollbar-thumb:hover,
+#chatList::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.5);
 }
