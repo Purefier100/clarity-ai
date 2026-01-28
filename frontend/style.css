@@ -247,87 +247,81 @@ body {
     background: radial-gradient(circle at top, #0f172a, #020617 70%);
 }
 
-/* ================= AUTH CARD ================= */
-.auth-card {
-    width: 100%;
-    max-width: 380px;
+/* ================= HORIZONTAL AUTH BAR ================= */
+.auth-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 
-    padding: 32px 28px;
-    border-radius: 20px;
+    padding: 18px;
+    border-radius: 18px;
 
-    background: #020617;
+    background: rgba(2, 6, 23, 0.95);
     border: 1px solid #1e293b;
 
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-
-    box-shadow: 0 40px 120px rgba(0, 0, 0, 0.8);
-}
-
-/* ================= TITLE ================= */
-.auth-card h1 {
-    text-align: center;
-    font-size: 2rem;
-    font-weight: 700;
-    color: #facc15;
-
-    margin-bottom: 12px;
+    box-shadow: 0 30px 100px rgba(0, 0, 0, 0.8);
 }
 
 /* ================= INPUTS ================= */
-.auth-card input {
-    height: 52px;
-    padding: 0 16px;
+.auth-row input {
+    height: 44px;
+    width: 180px;
 
-    border-radius: 14px;
+    padding: 0 14px;
+    border-radius: 12px;
     border: 1px solid #1e293b;
 
     background: #020617;
     color: #e5e7eb;
-
-    font-size: 1rem;
+    font-size: 0.95rem;
 }
 
-.auth-card input::placeholder {
+.auth-row input::placeholder {
     color: #64748b;
 }
 
 /* ================= BUTTONS ================= */
-.auth-card button {
-    height: 54px;
-    border-radius: 999px;
+.auth-row button {
+    height: 44px;
+    padding: 0 18px;
 
-    font-size: 1rem;
-    font-weight: 600;
-
-    cursor: pointer;
+    border-radius: 12px;
     border: none;
+
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
 }
 
-/* Primary */
+/* Register (primary) */
 #registerBtn {
-    background: #e5e7eb;
+    background: linear-gradient(135deg, #38bdf8, #0ea5e9);
     color: #020617;
 }
 
-/* Secondary */
+/* Login (secondary) */
 #loginBtn {
-    background: transparent;
+    background: #0f172a;
     color: #e5e7eb;
     border: 1px solid #1e293b;
 }
 
 /* Hover */
-.auth-card button:hover {
+.auth-row button:hover {
     opacity: 0.95;
 }
 
-/* ================= MOBILE ================= */
-@media (max-width: 480px) {
-    .auth-card {
-        margin: 0 16px;
-        padding: 28px 20px;
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+    .auth-row {
+        flex-direction: column;
+        width: 100%;
+        max-width: 360px;
+    }
+
+    .auth-row input,
+    .auth-row button {
+        width: 100%;
     }
 }
 
