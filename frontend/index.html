@@ -11,30 +11,28 @@
 
     <link rel="stylesheet" href="style.css" />
     <link rel="manifest" href="/manifest.json" />
-    <button id="logoutBtn" title="Logout">⎋</button>
-
 </head>
 
 <body>
 
-    <!-- APP CONTAINER -->
     <div class="container">
-        <h2>AI Chat</h2>
+        <!-- HEADER -->
+        <h2>
+            AI Chat
+            <button id="logoutBtn" title="Logout">⎋</button>
+        </h2>
 
-        <!-- ================= AUTH (SHOWS FIRST) ================= -->
+        <!-- AUTH -->
         <div id="auth">
             <div class="auth-row">
                 <input id="email" type="email" placeholder="Email" />
                 <input id="password" type="password" placeholder="Password" />
-
                 <button id="registerBtn">Register</button>
                 <button id="loginBtn">Login</button>
-                <button id="googleLogin">Continue with Google</button>
-
             </div>
         </div>
 
-        <!-- ================= SIDEBAR (HIDDEN UNTIL LOGIN) ================= -->
+        <!-- SIDEBAR -->
         <div id="sidebar">
             <div class="sidebar-header">
                 <h3>Chats</h3>
@@ -43,7 +41,7 @@
             <div id="chatList"></div>
         </div>
 
-        <!-- ================= CHAT (HIDDEN UNTIL LOGIN) ================= -->
+        <!-- CHAT -->
         <div id="chat">
             <div id="messages"></div>
 
@@ -51,21 +49,13 @@
                 <input id="messageInput" placeholder="Type a message..." />
                 <button id="sendBtn">Send</button>
             </div>
-
-            div.innerHTML = `
-            <span>${chat.preview}</span>
-            <button class="delete-chat">✕</button>
-            `;
-
         </div>
 
         <button id="scrollBottomBtn">↓</button>
     </div>
 
-    <!-- Sidebar toggle (optional, mobile) -->
     <button id="toggleSidebar">☰</button>
 
-    <!-- JS -->
     <script src="app.js"></script>
 </body>
 

@@ -411,16 +411,22 @@ body:has(#auth.hidden) #chat {
 }
 
 #logoutBtn {
+    float: right;
     background: transparent;
     border: none;
     color: #94a3b8;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     cursor: pointer;
 }
 
 #logoutBtn:hover {
     color: #f1f5f9;
 }
+
+body:not(.logged-in) #logoutBtn {
+    display: none;
+}
+
 
 .chat-item {
     display: flex;
