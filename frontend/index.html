@@ -11,6 +11,8 @@
 
     <link rel="stylesheet" href="style.css" />
     <link rel="manifest" href="/manifest.json" />
+    <button id="logoutBtn" title="Logout">⎋</button>
+
 </head>
 
 <body>
@@ -27,6 +29,8 @@
 
                 <button id="registerBtn">Register</button>
                 <button id="loginBtn">Login</button>
+                <button id="googleLogin">Continue with Google</button>
+
             </div>
         </div>
 
@@ -47,6 +51,12 @@
                 <input id="messageInput" placeholder="Type a message..." />
                 <button id="sendBtn">Send</button>
             </div>
+
+            div.innerHTML = `
+            <span>${chat.preview}</span>
+            <button class="delete-chat">✕</button>
+            `;
+
         </div>
 
         <button id="scrollBottomBtn">↓</button>

@@ -193,6 +193,25 @@ messageInput.addEventListener("keypress", e => {
     }
 });
 
+document.getElementById("logoutBtn").onclick = () => {
+    localStorage.clear();
+    location.reload();
+};
+
+div.querySelector(".delete-chat").onclick = (e) => {
+    e.stopPropagation();
+    const chats = JSON.parse(localStorage.getItem("chats") || "[]");
+    const updated = chats.filter(c => c.id !== chat.id);
+    localStorage.setItem("chats", JSON.stringify(updated));
+    renderChats();
+};
+
+document.getElementById("googleLogin").onclick = () => {
+    window.location.href = `${API_BASE}/api/auth/google`;
+};
+
+
+
 /* ================= SESSION ================= */
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -233,5 +252,13 @@ scrollBtn.onclick = () => {
 
 if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("/sw.js");
+}
+
+if (window.innerWidth < 768) {
+    messageInput.scrollIntoView({ behavior: "smooth" });
+}
+
+if (window.innerWidth < 768) {
+    sidebar.classList.remove("open");
 }
 

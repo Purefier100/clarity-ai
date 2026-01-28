@@ -409,3 +409,40 @@ body:has(#auth.hidden) #chat {
 #auth button {
     width: 100%;
 }
+
+#logoutBtn {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+
+#logoutBtn:hover {
+    color: #f1f5f9;
+}
+
+.chat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.delete-chat {
+    background: transparent;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+}
+
+.delete-chat:hover {
+    color: #ef4444;
+}
+
+.input-area button {
+    min-width: 72px;
+}
+
+.chat-item {
+    padding: 16px;
+}
