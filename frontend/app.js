@@ -1,6 +1,4 @@
 // app.js - Improved Frontend JavaScript
-// Always start logged out
-document.body.classList.remove("logged-in");
 
 const API_BASE = "https://ai-chat-api-a3wn.onrender.com";
 
@@ -11,18 +9,18 @@ const messagesDiv = document.getElementById("messages");
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
 const messageInput = document.getElementById("messageInput");
+const sendBtn = document.getElementById("sendBtn");
 
-// Sidebar elements (safe if missing)
+// Sidebar elements
 const chatList = document.getElementById("chatList");
 const toggleSidebar = document.getElementById("toggleSidebar");
 const sidebar = document.getElementById("sidebar");
 
-// Create a unique session ID for this user
+// Session ID
 let sessionId = `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
 /* ================= HELPERS ================= */
 
-// Display normal messages
 function addMessage(sender, text, isError = false) {
     const messageEl = document.createElement("p");
     messageEl.innerHTML = `<b>${sender}:</b> ${text}`;
@@ -31,7 +29,6 @@ function addMessage(sender, text, isError = false) {
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
 
-// AI streaming message (typing effect)
 function streamText(text) {
     const p = document.createElement("p");
     p.innerHTML = "<b>AI:</b> ";
@@ -46,11 +43,7 @@ function streamText(text) {
     }, 15);
 }
 
-// Button loading state
 function showLoading(show) {
-    const sendBtn = document.getElementById("sendBtn");
-    if (!sendBtn) return;
-
     sendBtn.disabled = show;
     sendBtn.textContent = show ? "Sending..." : "Send";
 }
@@ -82,20 +75,19 @@ function renderChats() {
         const div = document.createElement("div");
         div.className = "chat-item";
         div.textContent = chat.preview || "New chat";
-        div.onclick = () => location.reload(); // simple reset
+        div.onclick = () => location.reload();
         chatList.appendChild(div);
     });
 }
 
 /* ================= AUTH ================= */
 
-// Register
 document.getElementById("registerBtn").onclick = async () => {
     const email = emailInput.value.trim();
     const password = passwordInput.value;
 
     if (!email || !password) return alert("Please enter both email and password");
-    if (password.length < 6) return alert("Password must be at least 6 characters long");
+    if (password.length < 6) return alert("Password must be at least 6 characters");
 
     try {
         const res = await fetch(`${API_BASE}/api/auth/register`, {
@@ -105,6 +97,7 @@ document.getElementById("registerBtn").onclick = async () => {
         });
 
         const data = await res.json();
+
         if (data.success) {
             alert("Registration successful! Please login.");
             emailInput.value = "";
@@ -113,11 +106,10 @@ document.getElementById("registerBtn").onclick = async () => {
             alert(data.error || "Registration failed");
         }
     } catch {
-        alert("Network error. Please check your connection.");
+        alert("Network error");
     }
 };
 
-// Login
 document.getElementById("loginBtn").onclick = async () => {
     const email = emailInput.value.trim();
     const password = passwordInput.value;
@@ -140,6 +132,9 @@ document.getElementById("loginBtn").onclick = async () => {
             authDiv.classList.add("hidden");
             chatDiv.classList.remove("hidden");
 
+            document.body.classList.add("logged-in");
+            sendBtn.disabled = false;
+
             messagesDiv.innerHTML = "";
             addMessage("System", `Welcome back, ${email}! Start chatting with the AI.`);
             messageInput.focus();
@@ -147,13 +142,13 @@ document.getElementById("loginBtn").onclick = async () => {
             alert(data.error || "Login failed");
         }
     } catch {
-        alert("Network error. Please try again.");
+        alert("Network error");
     }
 };
 
 /* ================= CHAT ================= */
 
-document.getElementById("sendBtn").onclick = async () => {
+sendBtn.onclick = async () => {
     const token = localStorage.getItem("token");
     const message = messageInput.value.trim();
 
@@ -162,12 +157,8 @@ document.getElementById("sendBtn").onclick = async () => {
 
     try {
         addMessage("You", message);
-        // Haptic feedback (Android)
-        if (navigator.vibrate) {
-            navigator.vibrate(30);
-        }
-
         saveChatPreview(message);
+
         messageInput.value = "";
         showLoading(true);
 
@@ -185,34 +176,25 @@ document.getElementById("sendBtn").onclick = async () => {
         if (data.success && data.reply) {
             streamText(data.reply);
         } else {
-            addMessage("System", data.error || "Failed to get response", true);
+            addMessage("System", data.error || "AI error", true);
         }
     } catch {
-        addMessage("System", "Network error. Please check your connection.", true);
+        addMessage("System", "Network error", true);
     } finally {
         showLoading(false);
         messageInput.focus();
     }
 };
 
-// Enter key
 messageInput.addEventListener("keypress", e => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    if (e.key === "Enter") {
         e.preventDefault();
-        document.getElementById("sendBtn").click();
+        sendBtn.click();
     }
 });
 
 /* ================= SESSION ================= */
 
-function logout() {
-    localStorage.clear();
-    chatDiv.classList.add("hidden");
-    authDiv.classList.remove("hidden");
-    messagesDiv.innerHTML = "";
-}
-
-// Auto login
 window.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem("token");
     const email = localStorage.getItem("userEmail");
@@ -220,48 +202,20 @@ window.addEventListener("DOMContentLoaded", () => {
     if (token) {
         authDiv.classList.add("hidden");
         chatDiv.classList.remove("hidden");
+
+        document.body.classList.add("logged-in");
+        sendBtn.disabled = false;
+
         addMessage("System", `Welcome back, ${email || "User"}! Continue your conversation.`);
     } else {
-        addMessage("System", "Ask me anything to get started 👋");
+        sendBtn.disabled = true;
     }
 
     renderChats();
 });
 
-// Loading screen cleanup
-window.onload = () => {
-    const loader = document.getElementById("loadingScreen");
-    if (loader) loader.style.display = "none";
-};
-/* ================= SWIPE TO OPEN SIDEBAR ================= */
+/* ================= SCROLL BUTTON ================= */
 
-let touchStartX = 0;
-let touchEndX = 0;
-
-chatDiv.addEventListener("touchstart", (e) => {
-    touchStartX = e.changedTouches[0].screenX;
-});
-
-chatDiv.addEventListener("touchend", (e) => {
-    touchEndX = e.changedTouches[0].screenX;
-    handleSwipe();
-});
-
-function handleSwipe() {
-    if (!sidebar) return;
-
-    const swipeDistance = touchEndX - touchStartX;
-
-    // Swipe right
-    if (swipeDistance > 80) {
-        sidebar.classList.add("open");
-    }
-
-    // Swipe left
-    if (swipeDistance < -80) {
-        sidebar.classList.remove("open");
-    }
-}
 const scrollBtn = document.getElementById("scrollBottomBtn");
 
 messagesDiv.addEventListener("scroll", () => {
@@ -274,29 +228,10 @@ messagesDiv.addEventListener("scroll", () => {
 scrollBtn.onclick = () => {
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
 };
+
+/* ================= SERVICE WORKER ================= */
+
 if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("/sw.js");
 }
 
-// Always start logged out
-document.body.classList.remove("logged-in");
-
-
-loginBtn.addEventListener("click", async () => {
-    // your auth logic here...
-
-    // ✅ after success
-    document.getElementById("auth").classList.add("hidden");
-    document.body.classList.add("logged-in");
-});
-
-registerBtn.addEventListener("click", async () => {
-    // your register logic...
-
-    document.getElementById("auth").classList.add("hidden");
-    document.body.classList.add("logged-in");
-});
-
-if (!document.body.classList.contains("logged-in")) {
-    document.getElementById("sendBtn").disabled = true;
-}
