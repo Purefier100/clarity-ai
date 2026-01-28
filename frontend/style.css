@@ -387,3 +387,25 @@ body:has(#auth.hidden) #chat {
 #chatList::-webkit-scrollbar-thumb:hover {
     background: rgba(148, 163, 184, 0.5);
 }
+
+/* FORCE AUTH VERTICAL STACK (FINAL FIX) */
+#auth {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#auth .auth-row {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    width: 100%;
+    max-width: 420px;
+}
+
+/* Inputs full width */
+#auth input,
+#auth button {
+    width: 100%;
+}
