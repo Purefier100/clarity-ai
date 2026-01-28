@@ -306,15 +306,15 @@ body:has(#auth.hidden) #chat {
 }
 
 /* ================= MOBILE ================= */
-/* ================= MOBILE ================= */
+/* ================= MOBILE MENU ================= */
 @media (max-width: 768px) {
 
-    /* ===== SIDEBAR MOBILE ===== */
+    /* Sidebar */
     #sidebar {
         position: fixed;
         top: 0;
         left: -100%;
-        width: 78%;
+        width: 80%;
         max-width: 300px;
         height: 100dvh;
         background: rgba(15, 23, 42, 0.98);
@@ -329,47 +329,50 @@ body:has(#auth.hidden) #chat {
         left: 0;
     }
 
-    /* Chat takes full screen */
-    #chat {
-        width: 100%;
-    }
-
-    /* Prevent background scrolling when sidebar open */
-    body.sidebar-open {
-        overflow: hidden;
-    }
-
-    /* ===== SIDEBAR FOOTER (LOGOUT) ===== */
+    /* Sidebar footer (logout) */
     .sidebar-footer {
-        padding: 16px;
         margin-top: auto;
-        background: rgba(15, 23, 42, 0.95);
+        padding: 16px;
+        border-top: 1px solid rgba(148, 163, 184, 0.15);
     }
 
     #logoutBtn {
         width: 100%;
         height: 48px;
-        font-size: 0.95rem;
         border-radius: 14px;
+        font-size: 0.95rem;
+        background: rgba(30, 41, 59, 0.8);
+        color: #f1f5f9;
+        border: 1px solid rgba(148, 163, 184, 0.25);
     }
 
-    /* ===== HAMBURGER BUTTON ===== */
+    /* Hamburger button */
     #toggleSidebar {
         display: flex;
         position: fixed;
         top: 14px;
         right: 14px;
         z-index: 1001;
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
         background: rgba(30, 41, 59, 0.9);
         color: #e5e7eb;
         border: 1px solid rgba(148, 163, 184, 0.2);
-        border-radius: 12px;
-        width: 44px;
-        height: 44px;
         align-items: center;
         justify-content: center;
         font-size: 1.2rem;
     }
+
+    /* Chat full width */
+    #chat {
+        width: 100%;
+    }
+}
+
+/* Desktop: hide hamburger */
+#toggleSidebar {
+    display: none;
 }
 
 /* ===== DESKTOP ===== */

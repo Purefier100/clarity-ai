@@ -35,7 +35,7 @@ function streamText(text) {
         p.innerHTML = `<b>AI:</b> ${text.slice(0, i)}`;
         i++;
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        if (i > text.length) clearInterval(interval);
+        if (i >= text.length) clearInterval(interval);
     }, 15);
 }
 
@@ -108,7 +108,7 @@ document.getElementById("loginBtn").onclick = async () => {
 
     const data = await res.json();
 
-    if (data.success) {
+    if (data.success && data.token) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("userEmail", email);
 
@@ -125,6 +125,8 @@ document.getElementById("loginBtn").onclick = async () => {
 /* ================= CHAT ================= */
 
 sendBtn.onclick = async () => {
+    if (sendBtn.disabled) return;
+
     const token = localStorage.getItem("token");
     const message = messageInput.value.trim();
     if (!token || !message) return;
@@ -159,6 +161,7 @@ messageInput.addEventListener("keydown", e => {
 
 logoutBtn.onclick = () => {
     localStorage.clear();
+    sidebar.classList.remove("open");
     location.reload();
 };
 
