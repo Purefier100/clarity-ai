@@ -225,157 +225,53 @@ body {
     }
 }
 
-/* ================= CLEAN AUTH CARD (CHATGPT STYLE) ================= */
-
+/* ================= AUTH OVERLAY ================= */
 #auth {
     position: fixed;
     inset: 0;
-    z-index: 999;
-    background: rgba(2, 6, 23, 0.85);
-    backdrop-filter: blur(10px);
+    z-index: 9999;
+    background: rgba(2, 6, 23, 0.78);
+    backdrop-filter: blur(12px);
 
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-/* Card */
-#auth {
-    display: flex;
-}
-
-#auth input,
-#auth button {
-    width: 100%;
-}
-
-/* Auth box */
-#auth {
-    padding: 20px;
-}
-
-#auth>* {
-    display: none;
-    /* safety */
-}
-
-/* Use the auth div itself as the card */
-#auth {
-    flex-direction: column;
-    gap: 14px;
-    width: 100%;
-    max-width: 360px;
-
-    background: #020617;
-    border: 1px solid #1e293b;
-    border-radius: 18px;
-    padding: 28px;
-
-    box-shadow: 0 40px 120px rgba(0, 0, 0, 0.7);
-}
-
-/* Inputs */
-#auth input {
-    height: 48px;
-    padding: 0 14px;
-    border-radius: 12px;
-    border: 1px solid #1e293b;
-    background: #020617;
-    color: #e5e7eb;
-    font-size: 0.95rem;
-}
-
-#auth input::placeholder {
-    color: #64748b;
-}
-
-/* Buttons */
-#auth button {
-    height: 48px;
-    border-radius: 14px;
-    border: none;
-    font-weight: 600;
-    font-size: 0.95rem;
-    cursor: pointer;
-}
-
-/* Register */
-#registerBtn {
-    background: linear-gradient(135deg, #38bdf8, #0ea5e9);
-    color: #020617;
-}
-
-/* Login */
-#loginBtn {
-    background: #0f172a;
-    color: #e5e7eb;
-    border: 1px solid #1e293b;
-}
-
-/* Hover */
-#auth button:hover {
-    opacity: 0.95;
-}
-
-/* Hide auth when logged in */
+/* Hide when logged in */
 #auth.hidden {
     display: none !important;
 }
 
-/* ================= MOBILE POLISH ================= */
-@media (max-width: 480px) {
-    #auth {
-        margin: 0 16px;
-        padding: 24px;
-    }
-}
-
-/* ================= AUTH OVERLAY (FIXED) ================= */
-
-#auth {
-    position: fixed;
-    inset: 0;
-    z-index: 999;
-    background: rgba(2, 6, 23, 0.75);
-    backdrop-filter: blur(10px);
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 /* ================= AUTH CARD ================= */
-
 #auth {
-    pointer-events: auto;
-}
-
-/* Card layout */
-#auth {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-
     width: 100%;
     max-width: 360px;
 
     background: #020617;
     border: 1px solid #1e293b;
     border-radius: 18px;
+
     padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
 
     box-shadow: 0 40px 120px rgba(0, 0, 0, 0.7);
 }
 
 /* ================= INPUTS ================= */
-
 #auth input {
+    width: 100%;
     height: 48px;
+
     padding: 0 14px;
     border-radius: 12px;
+
     border: 1px solid #1e293b;
     background: #020617;
     color: #e5e7eb;
+
     font-size: 0.95rem;
 }
 
@@ -384,41 +280,43 @@ body {
 }
 
 /* ================= BUTTONS ================= */
-
 #auth button {
+    width: 100%;
     height: 48px;
+
     border-radius: 14px;
     border: none;
+
     font-weight: 600;
     font-size: 0.95rem;
     cursor: pointer;
+
+    transition: transform 0.15s ease, opacity 0.15s ease;
 }
 
-/* Register = primary */
+/* Primary – Register */
 #registerBtn {
     background: linear-gradient(135deg, #38bdf8, #0ea5e9);
     color: #020617;
 }
 
-/* Login = secondary */
+/* Secondary – Login */
 #loginBtn {
     background: #0f172a;
     color: #e5e7eb;
     border: 1px solid #1e293b;
 }
 
+/* Hover / Active */
 #auth button:hover {
     opacity: 0.95;
 }
 
-/* ================= HIDE WHEN LOGGED IN ================= */
-
-#auth.hidden {
-    display: none !important;
+#auth button:active {
+    transform: scale(0.98);
 }
 
 /* ================= MOBILE ================= */
-
 @media (max-width: 480px) {
     #auth {
         margin: 0 16px;
