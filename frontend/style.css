@@ -234,87 +234,92 @@ body {
     }
 }
 
-/* ================= AUTH OVERLAY ================= */
+/* ================= CHATGPT-STYLE AUTH SCREEN ================= */
 
 #auth {
     position: fixed;
     inset: 0;
-    z-index: 10000;
+    z-index: 9999;
 
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: space-between;
 
-    background: rgba(2, 6, 23, 0.85);
-    backdrop-filter: blur(12px);
+    background: radial-gradient(circle at top, #0f172a, #020617 70%);
+    color: #e5e7eb;
 }
 
-/* ================= AUTH CARD ================= */
+/* ================= TOP SECTION ================= */
 
-#auth form {
-    width: 100%;
-    max-width: 360px;
+.auth-header {
+    padding-top: 80px;
+    text-align: center;
+}
 
-    background: #020617;
-    border: 1px solid #1e293b;
-    border-radius: 18px;
+.auth-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #facc15;
+    /* yellow like ChatGPT */
+}
 
-    padding: 28px;
+/* ================= BOTTOM ACTIONS ================= */
+
+.auth-actions {
+    padding: 24px;
     display: flex;
     flex-direction: column;
     gap: 14px;
-
-    box-shadow: 0 40px 120px rgba(0, 0, 0, .75);
 }
 
-/* ================= INPUTS ================= */
+/* Inputs */
+.auth-actions input {
+    height: 52px;
+    padding: 0 16px;
 
-#auth input {
-    height: 48px;
-    padding: 0 14px;
-
-    border-radius: 12px;
+    border-radius: 14px;
     border: 1px solid #1e293b;
     background: #020617;
     color: #e5e7eb;
 
-    font-size: 0.95rem;
+    font-size: 1rem;
 }
 
-#auth input::placeholder {
+.auth-actions input::placeholder {
     color: #64748b;
 }
 
-/* ================= BUTTONS ================= */
+/* Buttons */
+.auth-actions button {
+    height: 54px;
+    border-radius: 999px;
 
-#auth button {
-    height: 48px;
-    border-radius: 14px;
-
+    font-size: 1rem;
     font-weight: 600;
-    font-size: 0.95rem;
     cursor: pointer;
     border: none;
 }
 
-/* Primary */
-#registerBtn {
-    background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+/* Google / primary */
+#googleBtn {
+    background: #ffffff;
     color: #020617;
 }
 
-/* Secondary */
+/* Sign up */
+#registerBtn {
+    background: #e5e7eb;
+    color: #020617;
+}
+
+/* Login */
 #loginBtn {
-    background: #0f172a;
+    background: transparent;
     color: #e5e7eb;
     border: 1px solid #1e293b;
 }
 
-#auth button:hover {
-    opacity: 0.96;
-}
-
-/* ================= HIDE AUTH AFTER LOGIN ================= */
+/* ================= HIDE WHEN LOGGED IN ================= */
 
 #auth.hidden {
     display: none !important;
@@ -330,11 +335,15 @@ body {
     display: flex;
 }
 
-/* ================= MOBILE ================= */
+/* ================= DESKTOP ================= */
 
-@media (max-width: 480px) {
-    #auth form {
-        margin: 0 16px;
-        padding: 24px;
+@media (min-width: 768px) {
+    #auth {
+        align-items: center;
+    }
+
+    .auth-actions {
+        max-width: 420px;
+        width: 100%;
     }
 }
