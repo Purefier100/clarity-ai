@@ -207,11 +207,11 @@ body {
 .auth-row {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
     width: 100%;
-    max-width: 420px;
-    padding: 48px 40px;
-    border-radius: 24px;
+    max-width: 440px;
+    padding: 60px 48px;
+    border-radius: 32px;
     background: rgba(15, 23, 42, 0.98);
     border: 1px solid rgba(148, 163, 184, 0.15);
     box-shadow:
@@ -220,44 +220,24 @@ body {
     backdrop-filter: blur(10px);
 }
 
-/* ================= AUTH HEADER ================= */
-.auth-row::before {
-    content: 'Welcome Back';
-    display: block;
-    font-size: 1.75rem;
-    font-weight: 700;
-    letter-spacing: -0.025em;
-    color: #f1f5f9;
-    margin-bottom: 8px;
-    text-align: center;
-}
-
-.auth-row::after {
-    content: 'Sign in to continue to your account';
-    display: block;
-    font-size: 0.9375rem;
-    color: #94a3b8;
-    margin-bottom: 12px;
-    text-align: center;
-}
-
 /* ================= INPUTS ================= */
 .auth-row input {
-    height: 54px;
+    height: 56px;
     width: 100%;
-    padding: 0 18px;
-    border-radius: 12px;
+    padding: 0 20px;
+    border-radius: 14px;
     border: 1px solid rgba(148, 163, 184, 0.2);
-    background: rgba(30, 41, 59, 0.5);
+    background: rgba(30, 41, 59, 0.4);
     color: #f1f5f9;
     font-size: 0.9375rem;
     transition: all 0.2s ease;
+    margin-bottom: 8px;
 }
 
 .auth-row input:focus {
     outline: none;
     border-color: #38bdf8;
-    background: rgba(30, 41, 59, 0.7);
+    background: rgba(30, 41, 59, 0.6);
     box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
 }
 
@@ -267,27 +247,30 @@ body {
 
 /* ================= BUTTONS ================= */
 .auth-row button {
-    height: 54px;
+    height: 64px;
     width: 100%;
-    border-radius: 12px;
+    border-radius: 50px;
     border: none;
-    font-size: 0.9375rem;
-    font-weight: 600;
-    letter-spacing: 0.025em;
+    font-size: 1.0625rem;
+    font-weight: 500;
+    letter-spacing: 0.015em;
     cursor: pointer;
     transition: all 0.2s ease;
+    margin-top: 8px;
 }
 
 /* Primary (Register / Sign up) */
 #registerBtn {
-    background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+    background: #f1f5f9;
     color: #020617;
-    box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    margin-bottom: 12px;
 }
 
 #registerBtn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(56, 189, 248, 0.35);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    background: #ffffff;
 }
 
 #registerBtn:active {
@@ -296,19 +279,19 @@ body {
 
 /* Secondary (Login) */
 #loginBtn {
-    background: rgba(30, 41, 59, 0.8);
+    background: transparent;
     color: #f1f5f9;
-    border: 1px solid rgba(148, 163, 184, 0.2);
+    border: 2px solid rgba(148, 163, 184, 0.3);
 }
 
 #loginBtn:hover {
-    background: rgba(30, 41, 59, 1);
-    border-color: rgba(148, 163, 184, 0.3);
+    border-color: rgba(148, 163, 184, 0.5);
+    background: rgba(30, 41, 59, 0.3);
 }
 
 /* ================= DIVIDER ================= */
 .auth-row input:first-of-type {
-    margin-top: 8px;
+    margin-top: 16px;
 }
 
 /* ================= HIDE AFTER LOGIN ================= */
@@ -371,17 +354,9 @@ body:has(#auth.hidden) #chat {
     }
 
     .auth-row {
-        max-width: 360px;
-        padding: 36px 28px;
+        max-width: 380px;
+        padding: 48px 32px;
         margin: 0 16px;
-    }
-
-    .auth-row::before {
-        font-size: 1.5rem;
-    }
-
-    .auth-row::after {
-        font-size: 0.875rem;
     }
 }
 
