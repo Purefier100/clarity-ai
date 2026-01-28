@@ -317,3 +317,17 @@ body {
 #auth.hidden {
     display: none !important;
 }
+
+/* ================= APP STATE ================= */
+
+/* Hide app until authenticated */
+#chat,
+#sidebar {
+    display: none;
+}
+
+/* Show app when logged in */
+body.logged-in #chat,
+body.logged-in #sidebar {
+    display: flex;
+}

@@ -1,4 +1,6 @@
 // app.js - Improved Frontend JavaScript
+// Always start logged out
+document.body.classList.remove("logged-in");
 
 const API_BASE = "https://ai-chat-api-a3wn.onrender.com";
 
@@ -276,3 +278,25 @@ if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("/sw.js");
 }
 
+// Always start logged out
+document.body.classList.remove("logged-in");
+
+
+loginBtn.addEventListener("click", async () => {
+    // your auth logic here...
+
+    // ✅ after success
+    document.getElementById("auth").classList.add("hidden");
+    document.body.classList.add("logged-in");
+});
+
+registerBtn.addEventListener("click", async () => {
+    // your register logic...
+
+    document.getElementById("auth").classList.add("hidden");
+    document.body.classList.add("logged-in");
+});
+
+if (!document.body.classList.contains("logged-in")) {
+    document.getElementById("sendBtn").disabled = true;
+}
